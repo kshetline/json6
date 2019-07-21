@@ -186,6 +186,18 @@ describe('JSON5', () => {
                 ))
             })
 
+            it('throws on invalid characters following a binary indicator', () => {
+                assert.throws(() => {
+                    JSON5.parse('0b2')
+                },
+                err => (
+                    err instanceof SyntaxError &&
+                    /^JSON5: invalid character '2'/.test(err.message) &&
+                    err.lineNumber === 1 &&
+                    err.columnNumber === 3
+                ))
+            })
+
             it('throws on invalid new lines in strings', () => {
                 assert.throws(() => {
                     JSON5.parse('"\n"')

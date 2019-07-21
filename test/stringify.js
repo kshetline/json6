@@ -1,5 +1,6 @@
 const assert = require('assert')
 const JSON5 = require('../lib')
+const big = require('../lib/bigint-util')
 
 require('tap').mochaGlobals()
 
@@ -113,6 +114,15 @@ describe('JSON5', () => {
             it('stringifies Number objects', () => {
                 // eslint-disable-next-line no-new-wrappers
                 assert.strictEqual(JSON5.stringify(new Number(-1.2)), '-1.2')
+            })
+        })
+
+        describe('bigints', () => {
+            it('stringifies bigints', () => {
+                if (big.hasBigInt) {
+                    assert.strictEqual(JSON5.stringify([big.toBigInt('4081516234268675309')]), '[4081516234268675309n]')
+                    assert.strictEqual(JSON5.stringify(big.toBigInt('-4081516234268675309')), '-4081516234268675309n')
+                }
             })
         })
 

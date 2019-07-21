@@ -37,10 +37,11 @@ been extended to JSON5.
 - Strings may include character escapes.
 
 ### Numbers
-- Numbers may be hexadecimal.
+- Numbers may be hexadecimal or binary.
 - Numbers may have a leading or trailing decimal point.
 - Numbers may be [IEEE 754] positive infinity, negative infinity, and NaN.
 - Numbers may begin with an explicit plus sign.
+- Numbers may be `BigInt` values, by appending a lowercase `n` to the end of an integer value (exponents not allowed), e.g. `100n`. When running a version of JavaScript that does not support `BigInt`, `BigInt` values will be parsed as the closest matching value of type `number`.
 
 ### Comments
 - Single and multi-line comments are allowed.

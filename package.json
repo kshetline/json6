@@ -46,6 +46,12 @@
     "url": "https://github.com/json5/json5/issues"
   },
   "homepage": "http://json5.org/",
+  "nyc": {
+    "exclude": [
+      "lib/bigint-util.js",
+      "test"
+    ]
+  },
   "dependencies": {
     "minimist": "^1.2.0"
   },

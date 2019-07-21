@@ -1,6 +1,7 @@
 const assert = require('assert')
 const sinon = require('sinon')
 const JSON5 = require('../lib')
+const big = require('../lib/bigint-util')
 
 require('tap').mochaGlobals()
 
@@ -163,6 +164,12 @@ t.test('parse(text)', t => {
         )
 
         t.strictSame(
+            JSON5.parse('[0b1,0B10,0b1011,-0b110101]'),
+            [1, 2, 11, -53],
+            'parses binary numbers'
+        )
+
+        t.strictSame(
             JSON5.parse('[Infinity,-Infinity]'),
             [Infinity, -Infinity],
             'parses signed and unsigned Infinity'
@@ -176,6 +183,24 @@ t.test('parse(text)', t => {
         t.ok(
             isNaN(JSON5.parse('-NaN')),
             'parses signed NaN'
+        )
+
+        t.end()
+    })
+
+    t.test('bigints', t => {
+        const testDigits = '-408151623426875309'
+
+        t.strictSame(
+            JSON5.parse(testDigits + 'n'),
+            big.toBigInt(testDigits),
+            big.hasBigInt ? 'parses bigint' : 'parses best approximation of bigint'
+        )
+
+        t.strictSame(
+            JSON5.parse('[0x21n,-0b1001n]'),
+            [big.toBigInt(33), big.toBigInt(-9)],
+            'parses bigints in hex and binary form'
         )
 
         t.end()
