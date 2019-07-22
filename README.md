@@ -1,9 +1,7 @@
 # JSONZ – JSON for Everyone
 
-[![Build Status](https://travis-ci.org/kshetline/json-z.svg)][Build Status]
-[![Coverage
-Status](https://coveralls.io/repos/github/kshetline/json-z/badge.svg)][Coverage
-Status]
+[![Build Status](https://travis-ci.com/kshetline/json-z.svg?branch=master)][Build Status]
+[![Coverage Status](https://coveralls.io/repos/github/kshetline/json-z/badge.svg?branch=master)](https://coveralls.io/github/kshetline/json-z?branch=master)
 
 JSON-Z is a superset of [JSON] that aims to
 alleviate some of the limitations of JSON by expanding its syntax to include
@@ -147,7 +145,7 @@ properties if a replacer array is specified.
 
 A JSON-Z string representing the value.
 
-### Node.js `require()` JSONZ files
+### Node.js `require()` JSON-Z files
 
 When using Node.js, you can `require()` JSON-Z files by adding the following
 statement.
