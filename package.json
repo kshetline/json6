@@ -1,6 +1,6 @@
 {
-  "name": "json6",
-  "version": "3.0.0-alpha.1",
+  "name": "json-z",
+  "version": "3.0.0-alpha.2",
   "description": "JSON for everyone.",
   "main": "lib/index.js",
   "bin": "lib/cli.js",
@@ -35,7 +35,8 @@
     "es2015",
     "json",
     "json5",
-    "json6"
+    "jsonz",
+    "json-z"
   ],
   "author": "Kerry Shetline <kerry@shetline.com>",
   "contributors": [
@@ -46,9 +47,9 @@
   ],
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/kshetline/json6/issues"
+    "url": "https://github.com/kshetline/json-z/issues"
   },
-  "homepage": "https://github.com/kshetline/json6",
+  "homepage": "https://github.com/kshetline/json-z",
   "nyc": {
     "exclude": [
       "lib/bigint-util.js",

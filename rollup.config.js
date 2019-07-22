@@ -11,7 +11,7 @@ module.exports = [
     output: {
       file: pkg.browser,
       format: 'umd',
-      name: 'JSON6',
+      name: 'JSONZ',
     },
     plugins: [
       resolve(),
@@ -25,7 +25,7 @@ module.exports = [
     output: {
       file: pkg.browser.replace(/\.js$/, '.min.js'),
       format: 'umd',
-      name: 'JSON6',
+      name: 'JSONZ',
     },
     plugins: [
       resolve(),

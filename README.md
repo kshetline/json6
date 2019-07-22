@@ -1,20 +1,20 @@
-# JSON6 – JSON for Everyone
+# JSONZ – JSON for Everyone
 
-[![Build Status](https://travis-ci.org/kshetline/json6.svg)][Build Status]
+[![Build Status](https://travis-ci.org/kshetline/json-z.svg)][Build Status]
 [![Coverage
-Status](https://coveralls.io/repos/github/kshetline/json6/badge.svg)][Coverage
+Status](https://coveralls.io/repos/github/kshetline/json-z/badge.svg)][Coverage
 Status]
 
-JSON6 is a superset of [JSON] that aims to
+JSON-Z is a superset of [JSON] that aims to
 alleviate some of the limitations of JSON by expanding its syntax to include
 some productions from [ECMAScript 5.1].
 
-This JavaScript library is the official reference implementation for JSON6
+This JavaScript library is the official reference implementation for JSON-Z
 parsing and serialization libraries.
 
-[Build Status]: https://travis-ci.org/kshetline/json6
+[Build Status]: https://travis-ci.org/kshetline/json-z
 
-[Coverage Status]: https://coveralls.io/github/kshetline/json6
+[Coverage Status]: https://coveralls.io/github/kshetline/json-z
 
 [JSON]: https://tools.ietf.org/html/rfc7159
 
@@ -22,7 +22,7 @@ parsing and serialization libraries.
 
 ## Summary of Features
 The following ECMAScript 5.1 features, which are not supported in JSON, have
-been extended to JSON6.
+been extended to JSON-Z.
 
 ### Objects
 - Object keys may be an ECMAScript 5.1 _[IdentifierName]_.
@@ -72,16 +72,16 @@ No \\n's!",
 ```
 
 ## Specification
-For a detailed explanation of the JSON6 format, please read (TODO: create specs).
+For a detailed explanation of the JSON-Z format, please read (TODO: create specs).
 
 ## Installation
 ### Node.js
 ```sh
-npm install json6
+npm install json-z
 ```
 
 ```
-const JSON6 = require('json6')
+const JSONZ = require('json-z')
 ```
 
 ### Browsers
@@ -89,48 +89,48 @@ const JSON6 = require('json6')
 <script src="https://unpkg.com/TODO-update-link/dist/index.min.js"></script>
 ```
 
-This will create a global `JSON6` variable.
+This will create a global `JSONZ` variable.
 
 ## API
-The JSON6 API is compatible with the [JSON API].
+The JSON-Z API is compatible with the [JSON API].
 
 [JSON API]:
 https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/JSON
 
-### JSON6.parse()
-Parses a JSON6 string, constructing the JavaScript value or object described by
+### JSONZ.parse()
+Parses a JSON-Z string, constructing the JavaScript value or object described by
 the string. An optional reviver function can be provided to perform a
 transformation on the resulting object before it is returned.
 
 #### Syntax
-    JSON6.parse(text[, reviver])
+    JSONZ.parse(text[, reviver])
 
 #### Parameters
-- `text`: The string to parse as JSON6.
+- `text`: The string to parse as JSON-Z.
 - `reviver`: If a function, this prescribes how the value originally produced by
   parsing is transformed, before being returned.
 
 #### Return value
-The object corresponding to the given JSON6 text.
+The object corresponding to the given JSON-Z text.
 
-### JSON6.stringify()
-Converts a JavaScript value to a JSON6 string, optionally replacing values if a
+### JSONZ.stringify()
+Converts a JavaScript value to a JSON-Z string, optionally replacing values if a
 replacer function is specified, or optionally including only the specified
 properties if a replacer array is specified.
 
 #### Syntax
-    JSON6.stringify(value[, replacer[, space]])
-    JSON6.stringify(value[, options])
+    JSONZ.stringify(value[, replacer[, space]])
+    JSONZ.stringify(value[, options])
 
 #### Parameters
-- `value`: The value to convert to a JSON6 string.
+- `value`: The value to convert to a JSON-Z string.
 - `replacer`: A function that alters the behavior of the stringification
   process, or an array of String and Number objects that serve as a whitelist
   for selecting/filtering the properties of the value object to be included in
-  the JSON6 string. If this value is null or not provided, all properties of the
-  object are included in the resulting JSON6 string.
+  the JSON-Z string. If this value is null or not provided, all properties of the
+  object are included in the resulting JSON-Z string.
 - `space`: A String or Number object that's used to insert white space into the
-  output JSON6 string for readability purposes. If this is a Number, it
+  output JSON-Z string for readability purposes. If this is a Number, it
   indicates the number of space characters to use as white space; this number is
   capped at 10 (if it is greater, the value is just 10). Values less than 1
   indicate that no space should be used. If this is a String, the string (or the
@@ -144,35 +144,37 @@ properties if a replacer array is specified.
     strings.
 
 #### Return value
-A JSON6 string representing the value.
 
-### Node.js `require()` JSON6 files
-When using Node.js, you can `require()` JSON6 files by adding the following
+A JSON-Z string representing the value.
+
+### Node.js `require()` JSONZ files
+
+When using Node.js, you can `require()` JSON-Z files by adding the following
 statement.
 
 ```
-require('json6/lib/register')
+require('json-z/lib/register')
 ```
 
-Then you can load a JSON6 file with a Node.js `require()` statement. For
+Then you can load a JSON-Z file with a Node.js `require()` statement. For
 example:
 
 ```
-const config = require('./config.json6')
+const config = require('./config.jsonz')
 ```
 
 ## CLI
-Since JSON is more widely used than JSON6, this package includes a CLI for
-converting JSON6 to JSON and for validating the syntax of JSON6 documents.
+Since JSON is more widely used than JSON-Z, this package includes a CLI for
+converting JSON-Z to JSON and for validating the syntax of JSON-Z documents.
 
 ### Installation
 ```sh
-npm install --global json6
+npm install --global json-z
 ```
 
 ### Usage
 ```sh
-json6 [options] <file>
+jsonz [options] <file>
 ```
 
 If `<file>` is not provided, then STDIN is used.
@@ -180,15 +182,14 @@ If `<file>` is not provided, then STDIN is used.
 #### Options:
 - `-s`, `--space`: The number of spaces to indent or `t` for tabs
 - `-o`, `--out-file [file]`: Output to the specified file, otherwise STDOUT
-- `-v`, `--validate`: Validate JSON6 but do not output JSON
+- `-v`, `--validate`: Validate JSON-Z but do not output JSON
 - `-V`, `--version`: Output the version number
 - `-h`, `--help`: Output usage information
 
-## Contributing
 ### Development
 ```sh
-git clone https://github.com/kshetline/json6
-cd json6
+git clone https://github.com/kshetline/json-z
+cd json-z
 npm install
 ```
 
@@ -197,8 +198,8 @@ run lint` before submitting pull requests. Please use an editor that supports
 [EditorConfig](http://editorconfig.org/).
 
 ### Issues
-To report bugs or request features regarding the JavaScript implentation of
-JSON6, please submit an issue to this repository.
+To report bugs or request features regarding the JavaScript implementation of
+JSON-Z, please submit an issue to this repository.
 
 ## License
 MIT. See [LICENSE.md](./LICENSE.md) for details.
@@ -231,5 +232,4 @@ supporter, contributing multiple patches and ideas.
 with ES5, wrote the official JSON5 specification, completely rewrote the
 codebase from the ground up, and is actively maintaining this project.
 
-[Kerry Shetline](https://github.com/kshetline) branched off from the JSON5 project
-to create JSON6.
+[Kerry Shetline](https://github.com/kshetline) branched off from the JSON5 project to create JSON-Z.

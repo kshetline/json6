@@ -1,6 +1,6 @@
 const assert = require('assert');
 const sinon = require('sinon');
-const JSON6 = require('../lib');
+const JSONZ = require('../lib');
 const big = require('../lib/bigint-util');
 
 require('tap').mochaGlobals();
@@ -10,56 +10,56 @@ const t = require('tap');
 t.test('parse(text)', t => {
   t.test('objects', t => {
     t.strictSame(
-      JSON6.parse('{}'),
+      JSONZ.parse('{}'),
       {},
       'parses empty objects'
     );
 
     t.strictSame(
-      JSON6.parse('{"a":1}'),
+      JSONZ.parse('{"a":1}'),
       {a: 1},
       'parses double string property names'
     );
 
     t.strictSame(
-      JSON6.parse("{'a':1}"),
+      JSONZ.parse("{'a':1}"),
       {a: 1},
       'parses single string property names'
     );
 
     t.strictSame(
-      JSON6.parse('{a:1}'),
+      JSONZ.parse('{a:1}'),
       {a: 1},
       'parses unquoted property names'
     );
 
     t.strictSame(
-      JSON6.parse('{$_:1,_$:2,a\u200C:3}'),
+      JSONZ.parse('{$_:1,_$:2,a\u200C:3}'),
       {$_: 1, _$: 2, 'a\u200C': 3},
       'parses special character property names'
     );
 
     // noinspection NonAsciiCharacters
     t.strictSame(
-      JSON6.parse('{ùńîċõďë:9}'),
+      JSONZ.parse('{ùńîċõďë:9}'),
       {'ùńîċõďë': 9},
       'parses unicode property names'
     );
 
     t.strictSame(
-      JSON6.parse('{\\u0061\\u0062:1,\\u0024\\u005F:2,\\u005F\\u0024:3}'),
+      JSONZ.parse('{\\u0061\\u0062:1,\\u0024\\u005F:2,\\u005F\\u0024:3}'),
       {ab: 1, $_: 2, _$: 3},
       'parses escaped property names'
     );
 
     t.strictSame(
-      JSON6.parse('{abc:1,def:2}'),
+      JSONZ.parse('{abc:1,def:2}'),
       {abc: 1, def: 2},
       'parses multiple properties'
     );
 
     t.strictSame(
-      JSON6.parse('{a:{b:2}}'),
+      JSONZ.parse('{a:{b:2}}'),
       {a: {b: 2}},
       'parses nested objects'
     );
@@ -69,25 +69,25 @@ t.test('parse(text)', t => {
 
   t.test('arrays', t => {
     t.strictSame(
-      JSON6.parse('[]'),
+      JSONZ.parse('[]'),
       [],
       'parses empty arrays'
     );
 
     t.strictSame(
-      JSON6.parse('[1]'),
+      JSONZ.parse('[1]'),
       [1],
       'parses array values'
     );
 
     t.strictSame(
-      JSON6.parse('[1,2]'),
+      JSONZ.parse('[1,2]'),
       [1, 2],
       'parses multiple array values'
     );
 
     t.strictSame(
-      JSON6.parse('[1,[2,3]]'),
+      JSONZ.parse('[1,[2,3]]'),
       [1, [2, 3]],
       'parses nested arrays'
     );
@@ -97,7 +97,7 @@ t.test('parse(text)', t => {
 
   t.test('nulls', t => {
     t.equal(
-      JSON6.parse('null'),
+      JSONZ.parse('null'),
       null,
       'parses nulls'
     );
@@ -107,13 +107,13 @@ t.test('parse(text)', t => {
 
   t.test('Booleans', t => {
     t.equal(
-      JSON6.parse('true'),
+      JSONZ.parse('true'),
       true,
       'parses true'
     );
 
     t.equal(
-      JSON6.parse('false'),
+      JSONZ.parse('false'),
       false,
       'parses false'
     );
@@ -123,72 +123,72 @@ t.test('parse(text)', t => {
 
   t.test('numbers', t => {
     t.strictSame(
-      JSON6.parse('[0,0.,0e0]'),
+      JSONZ.parse('[0,0.,0e0]'),
       [0, 0, 0],
       'parses leading zeroes'
     );
 
     t.strictSame(
-      JSON6.parse('[1,23,456,7890]'),
+      JSONZ.parse('[1,23,456,7890]'),
       [1, 23, 456, 7890],
       'parses integers'
     );
 
     t.strictSame(
-      JSON6.parse('[-1,+2,-.1,-0]'),
+      JSONZ.parse('[-1,+2,-.1,-0]'),
       [-1, +2, -0.1, -0],
       'parses signed numbers'
     );
 
     t.strictSame(
-      JSON6.parse('[.1,.23]'),
+      JSONZ.parse('[.1,.23]'),
       [0.1, 0.23],
       'parses leading decimal points'
     );
 
     t.strictSame(
-      JSON6.parse('[1.0,1.23]'),
+      JSONZ.parse('[1.0,1.23]'),
       [1, 1.23],
       'parses fractional numbers'
     );
 
     t.strictSame(
-      JSON6.parse('[1e0,1e1,1e01,1.e0,1.1e0,1e-1,1e+1]'),
+      JSONZ.parse('[1e0,1e1,1e01,1.e0,1.1e0,1e-1,1e+1]'),
       [1, 10, 10, 1, 1.1, 0.1, 10],
       'parses exponents'
     );
 
     t.strictSame(
-      JSON6.parse('[0x1,0x10,0xff,0xFF]'),
+      JSONZ.parse('[0x1,0x10,0xff,0xFF]'),
       [1, 16, 255, 255],
       'parses hexadecimal numbers'
     );
 
     t.strictSame(
-      JSON6.parse('[0b1,0B10,0b1011,-0b110101]'),
+      JSONZ.parse('[0b1,0B10,0b1011,-0b110101]'),
       [1, 2, 11, -53],
       'parses binary numbers'
     );
 
     t.strictSame(
-      JSON6.parse('[0o7,0o10,0O755,-0o123]'),
+      JSONZ.parse('[0o7,0o10,0O755,-0o123]'),
       [7, 8, 493, -83],
       'parses octal numbers'
     );
 
     t.strictSame(
-      JSON6.parse('[Infinity,-Infinity]'),
+      JSONZ.parse('[Infinity,-Infinity]'),
       [Infinity, -Infinity],
       'parses signed and unsigned Infinity'
     );
 
     t.ok(
-      isNaN(JSON6.parse('NaN')),
+      isNaN(JSONZ.parse('NaN')),
       'parses NaN'
     );
 
     t.ok(
-      isNaN(JSON6.parse('-NaN')),
+      isNaN(JSONZ.parse('-NaN')),
       'parses signed NaN'
     );
 
@@ -199,19 +199,19 @@ t.test('parse(text)', t => {
     const testDigits = '-408151623426875309';
 
     t.strictSame(
-      JSON6.parse(testDigits + 'n'),
+      JSONZ.parse(testDigits + 'n'),
       big.toBigInt(testDigits),
       big.hasBigInt ? 'parses bigint' : 'parses best approximation of bigint'
     );
 
     t.strictSame(
-      JSON6.parse('[0x21n,-0b1001n,-0o123n]'),
+      JSONZ.parse('[0x21n,-0b1001n,-0o123n]'),
       [big.toBigInt(33), big.toBigInt(-9), big.toBigInt(-83)],
       'parses bigints in hex, binary, and octal form'
     );
 
     t.strictSame(
-      JSON6.parse('[123E3n,-6700e-1n,3.14E3n]'),
+      JSONZ.parse('[123E3n,-6700e-1n,3.14E3n]'),
       [big.toBigInt(123000), big.toBigInt(-670), big.toBigInt(3140)],
       'parses bigints in exponential form'
     );
@@ -221,24 +221,24 @@ t.test('parse(text)', t => {
 
   t.test('strings', t => {
     t.equal(
-      JSON6.parse('"abc"'),
+      JSONZ.parse('"abc"'),
       'abc',
       'parses double quoted strings'
     );
 
     t.equal(
-      JSON6.parse("'abc'"),
+      JSONZ.parse("'abc'"),
       'abc',
       'parses single quoted strings'
     );
 
     t.strictSame(
-      JSON6.parse(`['"',"'"]`),
+      JSONZ.parse(`['"',"'"]`),
       ['"', "'"],
       'parses quotes in strings');
 
     t.equal(
-      JSON6.parse(`'\\b\\f\\n\\r\\t\\v\\0\\x0f\\u01fF\\\n\\\r\n\\\r\\\u2028\\\u2029\\a\\'\\"'`),
+      JSONZ.parse(`'\\b\\f\\n\\r\\t\\v\\0\\x0f\\u01fF\\\n\\\r\n\\\r\\\u2028\\\u2029\\a\\'\\"'`),
       `\b\f\n\r\t\v\0\x0f\u01FF\a'"`, // eslint-disable-line no-useless-escape
       'parses escpaed characters'
     );
@@ -251,7 +251,7 @@ t.test('parse(text)', t => {
         .calledWithMatch('not valid ECMAScript');
 
       assert.deepStrictEqual(
-        JSON6.parse("'\u2028\u2029'"),
+        JSONZ.parse("'\u2028\u2029'"),
         '\u2028\u2029'
       );
 
@@ -266,19 +266,19 @@ t.test('parse(text)', t => {
 
   t.test('comments', t => {
     t.strictSame(
-      JSON6.parse('{//comment\n}'),
+      JSONZ.parse('{//comment\n}'),
       {},
       'parses single-line comments'
     );
 
     t.strictSame(
-      JSON6.parse('{}//comment'),
+      JSONZ.parse('{}//comment'),
       {},
       'parses single-line comments at end of input'
     );
 
     t.strictSame(
-      JSON6.parse('{/*comment\n** */}'),
+      JSONZ.parse('{/*comment\n** */}'),
       {},
       'parses multi-line comments'
     );
@@ -288,7 +288,7 @@ t.test('parse(text)', t => {
 
   t.test('whitespace', t => {
     t.strictSame(
-      JSON6.parse('{\t\v\f \u00A0\uFEFF\n\r\u2028\u2029\u2003}'),
+      JSONZ.parse('{\t\v\f \u00A0\uFEFF\n\r\u2028\u2029\u2003}'),
       {},
       'parses whitespace'
     );
@@ -301,49 +301,49 @@ t.test('parse(text)', t => {
 
 t.test('parse(text, reviver)', t => {
   t.strictSame(
-    JSON6.parse('{a:1,b:2}', (k, v) => (k === 'a') ? 'revived' : v),
+    JSONZ.parse('{a:1,b:2}', (k, v) => (k === 'a') ? 'revived' : v),
     {a: 'revived', b: 2},
     'modifies property values'
   );
 
   t.strictSame(
-    JSON6.parse('{a:{b:2}}', (k, v) => (k === 'b') ? 'revived' : v),
+    JSONZ.parse('{a:{b:2}}', (k, v) => (k === 'b') ? 'revived' : v),
     {a: {b: 'revived'}},
     'modifies nested object property values'
   );
 
   t.strictSame(
-    JSON6.parse('{a:1,b:2}', (k, v) => (k === 'a') ? undefined : v),
+    JSONZ.parse('{a:1,b:2}', (k, v) => (k === 'a') ? undefined : v),
     {b: 2},
     'deletes property values'
   );
 
   t.strictSame(
-    JSON6.parse('[0,1,2]', (k, v) => (k === '1') ? 'revived' : v),
+    JSONZ.parse('[0,1,2]', (k, v) => (k === '1') ? 'revived' : v),
     [0, 'revived', 2],
     'modifies array values'
   );
 
   t.strictSame(
-    JSON6.parse('[0,[1,2,3]]', (k, v) => (k === '2') ? 'revived' : v),
+    JSONZ.parse('[0,[1,2,3]]', (k, v) => (k === '2') ? 'revived' : v),
     [0, [1, 2, 'revived']],
     'modifies nested array values'
   );
 
   t.strictSame(
-    JSON6.parse('[0,1,2]', (k, v) => (k === '1') ? undefined : v),
+    JSONZ.parse('[0,1,2]', (k, v) => (k === '1') ? undefined : v),
     [0, , 2], // eslint-disable-line no-sparse-arrays
     'deletes array values'
   );
 
   t.equal(
-    JSON6.parse('1', (k, v) => (k === '') ? 'revived' : v),
+    JSONZ.parse('1', (k, v) => (k === '') ? 'revived' : v),
     'revived',
     'modifies the root value'
   );
 
   t.strictSame(
-    JSON6.parse('{a:{b:2}}', function (k, v) { return (k === 'b' && this.b) ? 'revived' : v; }),
+    JSONZ.parse('{a:{b:2}}', function (k, v) { return (k === 'b' && this.b) ? 'revived' : v; }),
     {a: {b: 'revived'}},
     'sets `this` to the parent value'
   );
