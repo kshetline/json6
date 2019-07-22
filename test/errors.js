@@ -198,6 +198,18 @@ describe('JSON6', () => {
         ));
       });
 
+      it('throws on invalid characters following an octal indicator', () => {
+        assert.throws(() => {
+          JSON6.parse('0o?');
+        },
+        err => (
+          err instanceof SyntaxError &&
+                    /^JSON6: invalid character '?'/.test(err.message) &&
+                    err.lineNumber === 1 &&
+                    err.columnNumber === 3
+        ));
+      });
+
       it('throws on invalid new lines in strings', () => {
         assert.throws(() => {
           JSON6.parse('"\n"');

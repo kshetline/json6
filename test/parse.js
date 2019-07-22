@@ -39,6 +39,7 @@ t.test('parse(text)', t => {
       'parses special character property names'
     );
 
+    // noinspection NonAsciiCharacters
     t.strictSame(
       JSON6.parse('{ùńîċõďë:9}'),
       {'ùńîċõďë': 9},
@@ -170,6 +171,12 @@ t.test('parse(text)', t => {
     );
 
     t.strictSame(
+      JSON6.parse('[0o7,0o10,0O755,-0o123]'),
+      [7, 8, 493, -83],
+      'parses octal numbers'
+    );
+
+    t.strictSame(
       JSON6.parse('[Infinity,-Infinity]'),
       [Infinity, -Infinity],
       'parses signed and unsigned Infinity'
@@ -198,9 +205,9 @@ t.test('parse(text)', t => {
     );
 
     t.strictSame(
-      JSON6.parse('[0x21n,-0b1001n]'),
-      [big.toBigInt(33), big.toBigInt(-9)],
-      'parses bigints in hex and binary form'
+      JSON6.parse('[0x21n,-0b1001n,-0o123n]'),
+      [big.toBigInt(33), big.toBigInt(-9), big.toBigInt(-83)],
+      'parses bigints in hex, binary, and octal form'
     );
 
     t.end();

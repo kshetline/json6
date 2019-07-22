@@ -37,7 +37,7 @@ been extended to JSON6.
 - Strings may include character escapes.
 
 ### Numbers
-- Numbers may be hexadecimal or binary.
+- Numbers may be hexadecimal, octal, or binary.
 - Numbers may have a leading or trailing decimal point.
 - Numbers may be [IEEE 754] positive infinity, negative infinity, and NaN.
 - Numbers may begin with an explicit plus sign.
@@ -54,7 +54,7 @@ been extended to JSON6.
 [IEEE 754]: http://ieeexplore.ieee.org/servlet/opac?punumber=4610933
 
 ## Short Example
-```js
+```
 {
   // comments
   unquoted: 'and you can quote me on that',
@@ -78,12 +78,12 @@ For a detailed explanation of the JSON6 format, please read (TODO: create specs)
 npm install json6
 ```
 
-```js
+```
 const JSON6 = require('json6')
 ```
 
 ### Browsers
-```html
+```
 <script src="https://unpkg.com/TODO-update-link/dist/index.min.js"></script>
 ```
 
@@ -148,14 +148,14 @@ A JSON6 string representing the value.
 When using Node.js, you can `require()` JSON6 files by adding the following
 statement.
 
-```js
+```
 require('json6/lib/register')
 ```
 
 Then you can load a JSON6 file with a Node.js `require()` statement. For
 example:
 
-```js
+```
 const config = require('./config.json6')
 ```
 
