@@ -210,6 +210,12 @@ t.test('parse(text)', t => {
       'parses bigints in hex, binary, and octal form'
     );
 
+    t.strictSame(
+      JSON6.parse('[123E3n,-6700e-1n,3.14E3n]'),
+      [big.toBigInt(123000), big.toBigInt(-670), big.toBigInt(3140)],
+      'parses bigints in exponential form'
+    );
+
     t.end();
   });
 

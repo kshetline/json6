@@ -210,6 +210,30 @@ describe('JSON6', () => {
         ));
       });
 
+      it('throws on invalid exponent for bigint', () => {
+        assert.throws(() => {
+          JSON6.parse('1230e-2n');
+        },
+        err => {
+          console.log('err;', err.message);
+          return err instanceof SyntaxError &&
+                    /^JSON6: "1230e-2n" contains invalid exponent/.test(err.message) &&
+                    err.lineNumber === 1 &&
+                    err.columnNumber === 1;
+        });
+
+        assert.throws(() => {
+          JSON6.parse('123e-1n');
+        },
+        err => {
+          console.log('err;', err.message);
+          return err instanceof SyntaxError &&
+                    /^JSON6: "123e-1n" contains invalid exponent/.test(err.message) &&
+                    err.lineNumber === 1 &&
+                    err.columnNumber === 1;
+        });
+      });
+
       it('throws on invalid new lines in strings', () => {
         assert.throws(() => {
           JSON6.parse('"\n"');

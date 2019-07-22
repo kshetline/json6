@@ -43,6 +43,8 @@ been extended to JSON6.
 - Numbers may begin with an explicit plus sign.
 - Numbers may be `BigInt` values, by appending a lowercase `n` to the end of an integer value (exponents not allowed), e.g. `100n`. When running a version of JavaScript that does not support `BigInt`, `BigInt` values will be parsed as the closest matching value of type `number`.
 
+  `BigInt` values can be in decimal, hexadecimal, octal, or binary form. Exponential notation can also be used (e.g. `4.2E12n`) so long as the value including exponent is an integer value.
+
 ### Comments
 - Single and multi-line comments are allowed.
 
