@@ -1,6 +1,6 @@
 {
   "name": "json-z",
-  "version": "3.0.0-alpha.2",
+  "version": "3.0.0-alpha.3",
   "description": "JSON for everyone.",
   "main": "lib/index.js",
   "bin": "lib/cli.js",
@@ -61,6 +61,7 @@
   },
   "devDependencies": {
     "core-js": "^2.6.5",
+    "coveralls": "^3.0.5",
     "eslint": "^5.15.3",
     "eslint-config-standard": "^12.0.0",
     "eslint-plugin-import": "^2.16.0",

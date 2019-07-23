@@ -8,210 +8,212 @@ const pkg = require('../package.json');
 const cliPath = path.resolve(__dirname, '../lib/cli.js');
 
 tap.test('CLI', t => {
-    t.test('converts JSON-Z to JSON from stdin to stdout', t => {
-        const proc = child.spawn(process.execPath, [cliPath]);
-        let output = '';
-        proc.stdout.on('data', data => {
-            output += data;
-        });
-
-        proc.stdout.on('end', () => {
-            assert.strictEqual(output, '{"a":1,"b":2}');
-            t.end();
-        });
-
-        fs.createReadStream(path.resolve(__dirname, 'test.jsonz')).pipe(proc.stdin);
+  t.test('converts JSON-Z to JSON from stdin to stdout', t => {
+    const proc = child.spawn(process.execPath, [cliPath]);
+    let output = '';
+    proc.stdout.on('data', data => {
+      output += data;
     });
 
-    t.test('reads from the specified file', t => {
-        const proc = child.spawn(
-            process.execPath,
-            [
-                cliPath,
-                path.resolve(__dirname, 'test.jsonz'),
-            ]
-        );
-
-        let output = '';
-        proc.stdout.on('data', data => {
-            output += data;
-        });
-
-        proc.stdout.on('end', () => {
-            assert.strictEqual(output, '{"a":1,"b":2}');
-            t.end();
-        });
+    proc.stdout.on('end', () => {
+      assert.strictEqual(output, '{"a":1,"b":2}');
+      t.end();
     });
 
-    t.test('indents output with the number of spaces specified', t => {
-        const proc = child.spawn(
-            process.execPath,
-            [
-                cliPath,
-                path.resolve(__dirname, 'test.jsonz'),
-                '-s',
-                '4',
-            ]
-        );
+    fs.createReadStream(path.resolve(__dirname, 'test.jsonz')).pipe(proc.stdin);
+  });
 
-        let output = '';
-        proc.stdout.on('data', data => {
-            output += data;
-        });
+  t.test('reads from the specified file', t => {
+    const proc = child.spawn(
+      process.execPath,
+      [
+        cliPath,
+        path.resolve(__dirname, 'test.jsonz'),
+      ]
+    );
 
-        proc.stdout.on('end', () => {
-            assert.strictEqual(output, '{\n    "a": 1,\n    "b": 2\n}');
-            t.end();
-        });
+    let output = '';
+    proc.stdout.on('data', data => {
+      output += data;
     });
 
-    t.test('indents output with tabs when specified', t => {
-        const proc = child.spawn(
-            process.execPath,
-            [
-                cliPath,
-                path.resolve(__dirname, 'test.jsonz'),
-                '-s',
-                't',
-            ]
-        );
+    proc.stdout.on('end', () => {
+      assert.strictEqual(output, '{"a":1,"b":2}');
+      t.end();
+    });
+  });
 
-        let output = '';
-        proc.stdout.on('data', data => {
-            output += data;
-        });
+  t.test('indents output with the number of spaces specified', t => {
+    const proc = child.spawn(
+      process.execPath,
+      [
+        cliPath,
+        path.resolve(__dirname, 'test.jsonz'),
+        '-s',
+        '4',
+      ]
+    );
 
-        proc.stdout.on('end', () => {
-            assert.strictEqual(output, '{\n\t"a": 1,\n\t"b": 2\n}');
-            t.end();
-        });
+    let output = '';
+    proc.stdout.on('data', data => {
+      output += data;
     });
 
-    t.test('outputs to the specified file', t => {
-        const proc = child.spawn(
-            process.execPath,
-            [
-                cliPath,
-                path.resolve(__dirname, 'test.jsonz'),
-                '-o',
-                path.resolve(__dirname, 'output.json'),
-            ]
-        );
+    proc.stdout.on('end', () => {
+      assert.strictEqual(output, '{\n    "a": 1,\n    "b": 2\n}');
+      t.end();
+    });
+  });
 
-        proc.on('exit', () => {
-            assert.strictEqual(
-                fs.readFileSync(
-                    path.resolve(__dirname, 'output.json'),
-                    'utf8'
-                ),
-                '{"a":1,"b":2}'
-            );
-            t.end();
-        });
+  t.test('indents output with tabs when specified', t => {
+    const proc = child.spawn(
+      process.execPath,
+      [
+        cliPath,
+        path.resolve(__dirname, 'test.jsonz'),
+        '-s',
+        't',
+      ]
+    );
 
-        t.tearDown(() => {
-            try {
-                fs.unlinkSync(path.resolve(__dirname, 'output.json'));
-            } catch (err) {}
-        });
+    let output = '';
+    proc.stdout.on('data', data => {
+      output += data;
     });
 
-    t.test('validates valid JSON-Z files', t => {
-        const proc = child.spawn(
-            process.execPath,
-            [
-                cliPath,
-                path.resolve(__dirname, 'test.jsonz'),
-                '-v',
-            ]
-        );
+    proc.stdout.on('end', () => {
+      assert.strictEqual(output, '{\n\t"a": 1,\n\t"b": 2\n}');
+      t.end();
+    });
+  });
 
-        proc.on('exit', code => {
-            assert.strictEqual(code, 0);
-            t.end();
-        });
+  t.test('outputs to the specified file', t => {
+    const proc = child.spawn(
+      process.execPath,
+      [
+        cliPath,
+        path.resolve(__dirname, 'test.jsonz'),
+        '-o',
+        path.resolve(__dirname, 'output.json'),
+      ]
+    );
+
+    proc.on('exit', () => {
+      assert.strictEqual(
+        fs.readFileSync(
+          path.resolve(__dirname, 'output.json'),
+          'utf8'
+        ),
+        '{"a":1,"b":2}'
+      );
+      t.end();
     });
 
-    t.test('validates invalid JSON-Z files', t => {
-        const proc = child.spawn(
-            process.execPath,
-            [
-                cliPath,
-                path.resolve(__dirname, 'invalid.jsonz'),
-                '-v',
-            ]
-        );
+    t.tearDown(() => {
+      try {
+        fs.unlinkSync(path.resolve(__dirname, 'output.json'));
+      }
+      catch (err) {}
+    });
+  });
 
-        let error = '';
-        proc.stderr.on('data', data => {
-            error += data;
-        });
+  t.test('validates valid JSON-Z files', t => {
+    const proc = child.spawn(
+      process.execPath,
+      [
+        cliPath,
+        path.resolve(__dirname, 'test.jsonz'),
+        '-v',
+      ]
+    );
 
-        proc.stderr.on('end', () => {
-            assert.strictEqual(error, "JSON-Z: invalid character 'a' at 1:1\n");
-        });
+    proc.on('exit', code => {
+      assert.strictEqual(code, 0);
+      t.end();
+    });
+  });
 
-        proc.on('exit', code => {
-            assert.strictEqual(code, 1);
-            t.end();
-        });
+  t.test('validates invalid JSON-Z files', t => {
+    const proc = child.spawn(
+      process.execPath,
+      [
+        cliPath,
+        path.resolve(__dirname, 'invalid.jsonz'),
+        '-v',
+      ]
+    );
+
+    let error = '';
+    proc.stderr.on('data', data => {
+      error += data;
     });
 
-    t.test('outputs the version number when specified', t => {
-        const proc = child.spawn(process.execPath, [cliPath, '-V']);
-
-        let output = '';
-        proc.stdout.on('data', data => {
-            output += data;
-        });
-
-        proc.stdout.on('end', () => {
-            assert.strictEqual(output, pkg.version + '\n');
-            t.end();
-        });
+    proc.stderr.on('end', () => {
+      assert.strictEqual(error, "JSON-Z: invalid character 'a' at 1:1\n");
     });
 
-    t.test('outputs usage information when specified', t => {
-        const proc = child.spawn(process.execPath, [cliPath, '-h']);
+    proc.on('exit', code => {
+      assert.strictEqual(code, 1);
+      t.end();
+    });
+  });
 
-        let output = '';
-        proc.stdout.on('data', data => {
-            output += data;
-        });
+  t.test('outputs the version number when specified', t => {
+    const proc = child.spawn(process.execPath, [cliPath, '-V']);
 
-        proc.stdout.on('end', () => {
-            assert(/Usage/.test(output));
-            t.end();
-        });
+    let output = '';
+    proc.stdout.on('data', data => {
+      output += data;
     });
 
-    t.test('is backward compatible with v0.5.1', t => {
-        const proc = child.spawn(
-            process.execPath,
-            [
-                cliPath,
-                '-c',
-                path.resolve(__dirname, 'test.jsonz'),
-            ]
-        );
+    proc.stdout.on('end', () => {
+      assert.strictEqual(output, pkg.version + '\n');
+      t.end();
+    });
+  });
 
-        proc.on('exit', () => {
-            assert.strictEqual(
-                fs.readFileSync(
-                    path.resolve(__dirname, 'test.json'),
-                    'utf8'
-                ),
-                '{"a":1,"b":2}'
-            );
-            t.end();
-        });
+  t.test('outputs usage information when specified', t => {
+    const proc = child.spawn(process.execPath, [cliPath, '-h']);
 
-        t.tearDown(() => {
-            try {
-                fs.unlinkSync(path.resolve(__dirname, 'test.json'));
-            } catch (err) {}
-        });
+    let output = '';
+    proc.stdout.on('data', data => {
+      output += data;
     });
 
-    t.end();
+    proc.stdout.on('end', () => {
+      assert(/Usage/.test(output));
+      t.end();
+    });
+  });
+
+  t.test('is backward compatible with v0.5.1', t => {
+    const proc = child.spawn(
+      process.execPath,
+      [
+        cliPath,
+        '-c',
+        path.resolve(__dirname, 'test.jsonz'),
+      ]
+    );
+
+    proc.on('exit', () => {
+      assert.strictEqual(
+        fs.readFileSync(
+          path.resolve(__dirname, 'test.json'),
+          'utf8'
+        ),
+        '{"a":1,"b":2}'
+      );
+      t.end();
+    });
+
+    t.tearDown(() => {
+      try {
+        fs.unlinkSync(path.resolve(__dirname, 'test.json'));
+      }
+      catch (err) {}
+    });
+  });
+
+  t.end();
 });
