@@ -1,6 +1,9 @@
 const assert = require('assert');
 const JSONZ = require('../lib');
 const big = require('../lib/bignumber-util');
+const Decimal = require('decimal.js');
+
+big.setBigDecimal(Decimal, function (a, b) { return a.equals(b); });
 
 require('tap').mochaGlobals();
 
@@ -117,14 +120,23 @@ describe('JSONZ', () => {
       });
     });
 
-    describe('bigints', () => {
-      it('stringifies bigints', () => {
-        if (big.hasBigInt) {
+    if (big.hasBigInt) {
+      describe('bigints', () => {
+        it('stringifies bigints', () => {
           assert.strictEqual(JSONZ.stringify([big.toBigInt('4081516234268675309')]), '[4081516234268675309n]');
           assert.strictEqual(JSONZ.stringify(big.toBigInt('-4081516234268675309')), '-4081516234268675309n');
-        }
+        });
       });
-    });
+    }
+
+    if (big.hasBigDecimal) {
+      describe('bigdecimals', () => {
+        it('stringifies bigdecimals', () => {
+          assert.strictEqual(JSONZ.stringify([big.toBigDecimal('3.141592653589793238462643383279')]), '[3.141592653589793238462643383279d]');
+          assert.strictEqual(JSONZ.stringify(big.toBigDecimal('-4081516234268675309')), '-4081516234268675309d');
+        });
+      });
+    }
 
     describe('strings', () => {
       it('stringifies single quoted strings', () => {

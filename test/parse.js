@@ -2,9 +2,9 @@ const assert = require('assert');
 const sinon = require('sinon');
 const JSONZ = require('../lib');
 const big = require('../lib/bignumber-util');
-// const Decimal = require('decimal.js');
+const Decimal = require('decimal.js');
 
-// big.setBigDecimal(Decimal, function (a, b) { return a.equals(b); });
+big.setBigDecimal(Decimal, function (a, b) { return a.equals(b); });
 
 require('tap').mochaGlobals();
 
@@ -241,7 +241,7 @@ t.test('parse(text)', t => {
 
     t.ok(
       big.equalBigDecimal(testValue, parsedValue),
-      big.hasBigInt ? 'parses bigdecimal' : 'parses best approximation of bigdecimal'
+      big.hasBigDecimal ? 'parses bigdecimal' : 'parses best approximation of bigdecimal'
     );
 
     testDigits = '-3.14';
@@ -250,7 +250,7 @@ t.test('parse(text)', t => {
 
     t.ok(
       big.equalBigDecimal(testValue, parsedValue),
-      big.hasBigInt ? 'parses bigdecimal' : 'parses best approximation of bigdecimal'
+      big.hasBigDecimal ? 'parses bigdecimal' : 'parses best approximation of bigdecimal'
     );
 
     testDigits = '314';
@@ -259,7 +259,7 @@ t.test('parse(text)', t => {
 
     t.ok(
       big.equalBigDecimal(testValue, parsedValue),
-      big.hasBigInt ? 'parses bigdecimal' : 'parses best approximation of bigdecimal'
+      big.hasBigDecimal ? 'parses bigdecimal' : 'parses best approximation of bigdecimal'
     );
 
     testDigits = '-314';
@@ -268,7 +268,7 @@ t.test('parse(text)', t => {
 
     t.ok(
       big.equalBigDecimal(testValue, parsedValue),
-      big.hasBigInt ? 'parses bigdecimal' : 'parses best approximation of bigdecimal'
+      big.hasBigDecimal ? 'parses bigdecimal' : 'parses best approximation of bigdecimal'
     );
 
     testDigits = '3.14E02';
@@ -277,7 +277,7 @@ t.test('parse(text)', t => {
 
     t.ok(
       big.equalBigDecimal(testValue, parsedValue),
-      big.hasBigInt ? 'parses bigdecimal' : 'parses best approximation of bigdecimal'
+      big.hasBigDecimal ? 'parses bigdecimal' : 'parses best approximation of bigdecimal'
     );
 
     testDigits = '-3.14E02';
@@ -286,7 +286,7 @@ t.test('parse(text)', t => {
 
     t.ok(
       big.equalBigDecimal(testValue, parsedValue),
-      big.hasBigInt ? 'parses bigdecimal' : 'parses best approximation of bigdecimal'
+      big.hasBigDecimal ? 'parses bigdecimal' : 'parses best approximation of bigdecimal'
     );
 
     testDigits = '66.';
@@ -295,7 +295,7 @@ t.test('parse(text)', t => {
 
     t.ok(
       big.equalBigDecimal(testValue, parsedValue),
-      big.hasBigInt ? 'parses bigdecimal' : 'parses best approximation of bigdecimal'
+      big.hasBigDecimal ? 'parses bigdecimal' : 'parses best approximation of bigdecimal'
     );
 
     testDigits = '-66.';
@@ -304,7 +304,7 @@ t.test('parse(text)', t => {
 
     t.ok(
       big.equalBigDecimal(testValue, parsedValue),
-      big.hasBigInt ? 'parses bigdecimal' : 'parses best approximation of bigdecimal'
+      big.hasBigDecimal ? 'parses bigdecimal' : 'parses best approximation of bigdecimal'
     );
 
     t.end();
