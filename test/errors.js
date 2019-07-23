@@ -210,12 +210,30 @@ describe('JSONZ', () => {
         ));
       });
 
+      it('throws on invalid use of underscore separators in numbers', () => {
+        const badNumbers = [
+          '_12', '1__2', '12_', '12_.3', '0._1', '._1', '.1_', '0.1__2', '12_E3', '1E_2', '1E2_', '1E2__3',
+          '0x_12', '0x1__2', '0x12_',
+          '0o_12', '0o1__2', '0o12_',
+          '0b_11', '0b1__1', '0b11_',
+        ];
+
+        for (let i = 0; i < badNumbers.length; ++i) {
+          assert.throws(() => {
+            JSONZ.parse(badNumbers[i]);
+          },
+          err => (
+            err instanceof SyntaxError &&
+                          /^JSON-Z: invalid character '_'/.test(err.message)
+          ));
+        }
+      });
+
       it('throws on invalid exponent for bigint', () => {
         assert.throws(() => {
           JSONZ.parse('1230e-2n');
         },
         err => {
-          console.log('err;', err.message);
           return err instanceof SyntaxError &&
                             /^JSON-Z: "1230e-2n" contains invalid exponent/.test(err.message) &&
                             err.lineNumber === 1 &&
@@ -226,7 +244,6 @@ describe('JSONZ', () => {
           JSONZ.parse('123e-1n');
         },
         err => {
-          console.log('err;', err.message);
           return err instanceof SyntaxError &&
                             /^JSON-Z: "123e-1n" contains invalid exponent/.test(err.message) &&
                             err.lineNumber === 1 &&

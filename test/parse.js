@@ -153,26 +153,32 @@ t.test('parse(text)', t => {
     );
 
     t.strictSame(
+      JSONZ.parse('[123_456,.1_2,-3e2_2,0_6]'),
+      [123456, 0.12, -3e22, 6],
+      'parses numbers with underscore separators'
+    );
+
+    t.strictSame(
       JSONZ.parse('[1e0,1e1,1e01,1.e0,1.1e0,1e-1,1e+1]'),
       [1, 10, 10, 1, 1.1, 0.1, 10],
       'parses exponents'
     );
 
     t.strictSame(
-      JSONZ.parse('[0x1,0x10,0xff,0xFF]'),
-      [1, 16, 255, 255],
+      JSONZ.parse('[0x1,0x10,0xff,0xFF,0x1_1]'),
+      [1, 16, 255, 255, 17],
       'parses hexadecimal numbers'
     );
 
     t.strictSame(
-      JSONZ.parse('[0b1,0B10,0b1011,-0b110101]'),
-      [1, 2, 11, -53],
+      JSONZ.parse('[0b1,0B10,0b1011,-0b110101,0b1_01]'),
+      [1, 2, 11, -53, 5],
       'parses binary numbers'
     );
 
     t.strictSame(
-      JSONZ.parse('[0o7,0o10,0O755,-0o123]'),
-      [7, 8, 493, -83],
+      JSONZ.parse('[0o7,0o10,0O755,-0o123,0o2_3]'),
+      [7, 8, 493, -83, 19],
       'parses octal numbers'
     );
 
