@@ -22,7 +22,7 @@
     "preversion": "npm run production",
     "production": "npm run lint && npm test && npm run build",
     "test": "tap -Rspec --100 test",
-    "quick-test": "tap -T -Rspec test/parse.js",
+    "quick-test": "tap -T -Rspec test/stringify.spec.js",
     "version": "npm run build-package && git add package.json5"
   },
   "repository": {
@@ -61,6 +61,7 @@
     "minimist": "^1.2.0"
   },
   "devDependencies": {
+    "big-integer": "^1.6.44",
     "core-js": "^2.6.5",
     "coveralls": "^3.0.5",
     "decimal.js": "^10.2.0",

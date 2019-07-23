@@ -23,7 +23,7 @@ The following ECMAScript 5.1 features, which are not supported in JSON, have
 been extended to JSON-Z.
 
 ### Objects
-- Object keys may be an ECMAScript 5.1 _[IdentifierName]_.
+- Object keys may be an unquoted ECMAScript 5.1 _[IdentifierName]_.
 - Object keys may be single quoted or backtick quoted.
 - Objects may have a single trailing comma.
 
