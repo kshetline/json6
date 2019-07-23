@@ -21,13 +21,19 @@ t.test('parse(text)', t => {
     t.strictSame(
       JSONZ.parse('{"a":1}'),
       {a: 1},
-      'parses double string property names'
+      'parses double-quoted string property names'
     );
 
     t.strictSame(
       JSONZ.parse("{'a':1}"),
       {a: 1},
-      'parses single string property names'
+      'parses single-quoted string property names'
+    );
+
+    t.strictSame(
+      JSONZ.parse('{`a`:1}'),
+      {a: 1},
+      'parses backtick-quoted string property names'
     );
 
     t.strictSame(
@@ -235,77 +241,26 @@ t.test('parse(text)', t => {
   });
 
   t.test('bigdecimals', t => {
-    let testDigits = '3.1415926535_8979323846_2643383279_5028841971_6939937510';
-    let testValue = big.toBigDecimal(testDigits.replace(/_/g, ''));
-    let parsedValue = JSONZ.parse(testDigits + 'd');
+    const testValues = [
+      '3.1415926535_8979323846_2643383279_5028841971_6939937510',
+      '-3.14',
+      '314',
+      '-314',
+      '3.14E02',
+      '-3.14E02',
+      '66.',
+      '-66.',
+    ];
 
-    t.ok(
-      big.equalBigDecimal(testValue, parsedValue),
-      big.hasBigDecimal ? 'parses bigdecimal' : 'parses best approximation of bigdecimal'
-    );
+    for (let testValue of testValues) {
+      let bdTestValue = big.toBigDecimal(testValue.replace(/_/g, ''));
+      let parsedValue = JSONZ.parse(testValue + 'd');
 
-    testDigits = '-3.14';
-    testValue = big.toBigDecimal(testDigits);
-    parsedValue = JSONZ.parse(testDigits + 'd');
-
-    t.ok(
-      big.equalBigDecimal(testValue, parsedValue),
-      big.hasBigDecimal ? 'parses bigdecimal' : 'parses best approximation of bigdecimal'
-    );
-
-    testDigits = '314';
-    testValue = big.toBigDecimal(testDigits);
-    parsedValue = JSONZ.parse(testDigits + 'd');
-
-    t.ok(
-      big.equalBigDecimal(testValue, parsedValue),
-      big.hasBigDecimal ? 'parses bigdecimal' : 'parses best approximation of bigdecimal'
-    );
-
-    testDigits = '-314';
-    testValue = big.toBigDecimal(testDigits);
-    parsedValue = JSONZ.parse(testDigits + 'd');
-
-    t.ok(
-      big.equalBigDecimal(testValue, parsedValue),
-      big.hasBigDecimal ? 'parses bigdecimal' : 'parses best approximation of bigdecimal'
-    );
-
-    testDigits = '3.14E02';
-    testValue = big.toBigDecimal(testDigits);
-    parsedValue = JSONZ.parse(testDigits + 'd');
-
-    t.ok(
-      big.equalBigDecimal(testValue, parsedValue),
-      big.hasBigDecimal ? 'parses bigdecimal' : 'parses best approximation of bigdecimal'
-    );
-
-    testDigits = '-3.14E02';
-    testValue = big.toBigDecimal(testDigits);
-    parsedValue = JSONZ.parse(testDigits + 'd');
-
-    t.ok(
-      big.equalBigDecimal(testValue, parsedValue),
-      big.hasBigDecimal ? 'parses bigdecimal' : 'parses best approximation of bigdecimal'
-    );
-
-    testDigits = '66.';
-    testValue = big.toBigDecimal(testDigits);
-    parsedValue = JSONZ.parse(testDigits + 'd');
-
-    t.ok(
-      big.equalBigDecimal(testValue, parsedValue),
-      big.hasBigDecimal ? 'parses bigdecimal' : 'parses best approximation of bigdecimal'
-    );
-
-    testDigits = '-66.';
-    testValue = big.toBigDecimal(testDigits);
-    parsedValue = JSONZ.parse(testDigits + 'd');
-
-    t.ok(
-      big.equalBigDecimal(testValue, parsedValue),
-      big.hasBigDecimal ? 'parses bigdecimal' : 'parses best approximation of bigdecimal'
-    );
+      t.ok(
+        big.equalBigDecimal(bdTestValue, parsedValue),
+        big.hasBigDecimal ? 'parses bigdecimal' : 'parses best approximation of bigdecimal'
+      );
+    }
 
     t.end();
   });
@@ -314,18 +269,24 @@ t.test('parse(text)', t => {
     t.equal(
       JSONZ.parse('"abc"'),
       'abc',
-      'parses double quoted strings'
+      'parses double-quoted strings'
     );
 
     t.equal(
       JSONZ.parse("'abc'"),
       'abc',
-      'parses single quoted strings'
+      'parses single-quoted strings'
+    );
+
+    t.equal(
+      JSONZ.parse('`abc`'),
+      'abc',
+      'parses backtick-quoted strings'
     );
 
     t.strictSame(
-      JSONZ.parse(`['"',"'"]`),
-      ['"', "'"],
+      JSONZ.parse(`['"',"'",'\`']`),
+      ['"', "'", '`'],
       'parses quotes in strings');
 
     t.equal(

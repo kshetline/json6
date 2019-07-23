@@ -24,13 +24,14 @@ been extended to JSON-Z.
 
 ### Objects
 - Object keys may be an ECMAScript 5.1 _[IdentifierName]_.
+- Object keys may be single quoted or backtick quoted.
 - Objects may have a single trailing comma.
 
 ### Arrays
 - Arrays may have a single trailing comma.
 
 ### Strings
-- Strings may be single quoted.
+- Strings may be single quoted or backtick quoted.
 - Strings may span multiple lines by escaping new line characters.
 - Strings may include character escapes.
 

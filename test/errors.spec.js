@@ -218,9 +218,9 @@ describe('JSONZ', () => {
           '0b_11', '0b1__1', '0b11_',
         ];
 
-        for (let i = 0; i < badNumbers.length; ++i) {
+        for (let badNumber of badNumbers) {
           assert.throws(() => {
-            JSONZ.parse(badNumbers[i]);
+            JSONZ.parse(badNumber);
           },
           err => (
             err instanceof SyntaxError &&
