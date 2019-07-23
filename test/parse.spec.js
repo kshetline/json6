@@ -2,7 +2,7 @@ const assert = require('assert');
 const sinon = require('sinon');
 const JSONZ = require('../lib');
 const big = require('../lib/bignumber-util');
-// const bigInt = require('big-integer')
+// const bigInt = require('big-integer');
 const Decimal = require('decimal.js');
 
 // JSONZ.setBigInt(bigInt);

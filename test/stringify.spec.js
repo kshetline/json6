@@ -1,7 +1,7 @@
 const assert = require('assert');
 const JSONZ = require('../lib');
 const big = require('../lib/bignumber-util');
-const bigInt = require('big-integer')
+const bigInt = require('big-integer');
 const Decimal = require('decimal.js');
 
 JSONZ.setBigInt(bigInt);
@@ -122,7 +122,7 @@ describe('JSONZ', () => {
       });
     });
 
-    if (big.hasBigInt() && false) {
+    if (big.hasBigInt()) {
       describe('bigints', () => {
         it('stringifies bigints', () => {
           assert.strictEqual(JSONZ.stringify([big.toBigInt('4081516234268675309')]), '[4081516234268675309n]');
@@ -131,7 +131,7 @@ describe('JSONZ', () => {
       });
     }
 
-    if (big.hasBigDecimal() && false) {
+    if (big.hasBigDecimal()) {
       describe('bigdecimals', () => {
         it('stringifies bigdecimals', () => {
           assert.strictEqual(JSONZ.stringify([big.toBigDecimal('3.141592653589793238462643383279')]), '[3.141592653589793238462643383279d]');
