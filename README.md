@@ -36,12 +36,11 @@ been extended to JSON-Z.
 
 ### Numbers
 - Numbers may be hexadecimal, octal, or binary.
-- Numbers may have a leading or trailing decimal point.
+- Numbers may have a leading or trailing decimal point, and may contain underscores used as separators.
 - Numbers may be [IEEE 754] positive infinity, negative infinity, and NaN.
 - Numbers may begin with an explicit plus sign.
-- Numbers may be `BigInt` values, by appending a lowercase `n` to the end of an integer value (exponents not allowed), e.g. `100n`. When running a version of JavaScript that does not support `BigInt`, `BigInt` values will be parsed as the closest matching value of type `number`.
-
-  `BigInt` values can be in decimal, hexadecimal, octal, or binary form. Exponential notation can also be used (e.g. `4.2E12n`) so long as the value including exponent is an integer value.
+- Numbers may be `BigInt` values, by appending a lowercase `n` to the end of an integer value, e.g. `100n`. When running a version of JavaScript that does not support `BigInt`, `BigInt` values will be parsed as the closest matching value of type `number`.
+- `BigInt` values can be in decimal, hexadecimal, octal, or binary form. Exponential notation can also be used (e.g. `4.2E12n`) so long as the value including exponent is an integer value.
 
 ### Comments
 - Single and multi-line comments are allowed.

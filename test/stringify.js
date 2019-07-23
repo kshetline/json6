@@ -1,6 +1,6 @@
 const assert = require('assert');
 const JSONZ = require('../lib');
-const big = require('../lib/bigint-util');
+const big = require('../lib/bignumber-util');
 
 require('tap').mochaGlobals();
 

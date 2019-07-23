@@ -1,7 +1,10 @@
 const assert = require('assert');
 const sinon = require('sinon');
 const JSONZ = require('../lib');
-const big = require('../lib/bigint-util');
+const big = require('../lib/bignumber-util');
+// const Decimal = require('decimal.js');
+
+// big.setBigDecimal(Decimal, function (a, b) { return a.equals(b); });
 
 require('tap').mochaGlobals();
 
@@ -211,6 +214,12 @@ t.test('parse(text)', t => {
     );
 
     t.strictSame(
+      JSONZ.parse('33n'),
+      big.toBigInt('33'),
+      'parses bigint'
+    );
+
+    t.strictSame(
       JSONZ.parse('[0x21n,-0b1001n,-0o123n]'),
       [big.toBigInt(33), big.toBigInt(-9), big.toBigInt(-83)],
       'parses bigints in hex, binary, and octal form'
@@ -220,6 +229,82 @@ t.test('parse(text)', t => {
       JSONZ.parse('[123E3n,-6700e-1n,3.14E3n]'),
       [big.toBigInt(123000), big.toBigInt(-670), big.toBigInt(3140)],
       'parses bigints in exponential form'
+    );
+
+    t.end();
+  });
+
+  t.test('bigdecimals', t => {
+    let testDigits = '3.1415926535_8979323846_2643383279_5028841971_6939937510';
+    let testValue = big.toBigDecimal(testDigits.replace(/_/g, ''));
+    let parsedValue = JSONZ.parse(testDigits + 'd');
+
+    t.ok(
+      big.equalBigDecimal(testValue, parsedValue),
+      big.hasBigInt ? 'parses bigdecimal' : 'parses best approximation of bigdecimal'
+    );
+
+    testDigits = '-3.14';
+    testValue = big.toBigDecimal(testDigits);
+    parsedValue = JSONZ.parse(testDigits + 'd');
+
+    t.ok(
+      big.equalBigDecimal(testValue, parsedValue),
+      big.hasBigInt ? 'parses bigdecimal' : 'parses best approximation of bigdecimal'
+    );
+
+    testDigits = '314';
+    testValue = big.toBigDecimal(testDigits);
+    parsedValue = JSONZ.parse(testDigits + 'd');
+
+    t.ok(
+      big.equalBigDecimal(testValue, parsedValue),
+      big.hasBigInt ? 'parses bigdecimal' : 'parses best approximation of bigdecimal'
+    );
+
+    testDigits = '-314';
+    testValue = big.toBigDecimal(testDigits);
+    parsedValue = JSONZ.parse(testDigits + 'd');
+
+    t.ok(
+      big.equalBigDecimal(testValue, parsedValue),
+      big.hasBigInt ? 'parses bigdecimal' : 'parses best approximation of bigdecimal'
+    );
+
+    testDigits = '3.14E02';
+    testValue = big.toBigDecimal(testDigits);
+    parsedValue = JSONZ.parse(testDigits + 'd');
+
+    t.ok(
+      big.equalBigDecimal(testValue, parsedValue),
+      big.hasBigInt ? 'parses bigdecimal' : 'parses best approximation of bigdecimal'
+    );
+
+    testDigits = '-3.14E02';
+    testValue = big.toBigDecimal(testDigits);
+    parsedValue = JSONZ.parse(testDigits + 'd');
+
+    t.ok(
+      big.equalBigDecimal(testValue, parsedValue),
+      big.hasBigInt ? 'parses bigdecimal' : 'parses best approximation of bigdecimal'
+    );
+
+    testDigits = '66.';
+    testValue = big.toBigDecimal(testDigits);
+    parsedValue = JSONZ.parse(testDigits + 'd');
+
+    t.ok(
+      big.equalBigDecimal(testValue, parsedValue),
+      big.hasBigInt ? 'parses bigdecimal' : 'parses best approximation of bigdecimal'
+    );
+
+    testDigits = '-66.';
+    testValue = big.toBigDecimal(testDigits);
+    parsedValue = JSONZ.parse(testDigits + 'd');
+
+    t.ok(
+      big.equalBigDecimal(testValue, parsedValue),
+      big.hasBigInt ? 'parses bigdecimal' : 'parses best approximation of bigdecimal'
     );
 
     t.end();

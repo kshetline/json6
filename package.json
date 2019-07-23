@@ -1,6 +1,6 @@
 {
   "name": "json-z",
-  "version": "3.0.0-alpha.3",
+  "version": "3.0.0-alpha.4",
   "description": "JSON for everyone.",
   "main": "lib/index.js",
   "bin": "lib/cli.js",
@@ -22,6 +22,7 @@
     "preversion": "npm run production",
     "production": "npm run lint && npm test && npm run build",
     "test": "tap -Rspec --100 test",
+    "quick-test": "tap -T -Rspec test/parse.js",
     "version": "npm run build-package && git add package.json5"
   },
   "repository": {
@@ -52,7 +53,7 @@
   "homepage": "https://github.com/kshetline/json-z",
   "nyc": {
     "exclude": [
-      "lib/bigint-util.js",
+      "lib/bignumber-util.js",
       "test"
     ]
   },
@@ -62,6 +63,7 @@
   "devDependencies": {
     "core-js": "^2.6.5",
     "coveralls": "^3.0.5",
+    "decimal.js": "^10.2.0",
     "eslint": "^5.15.3",
     "eslint-config-standard": "^12.0.0",
     "eslint-plugin-import": "^2.16.0",
