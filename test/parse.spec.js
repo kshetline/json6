@@ -2,10 +2,10 @@ const assert = require('assert');
 const sinon = require('sinon');
 const JSONZ = require('../lib');
 const big = require('../lib/bignumber-util');
-// const bigInt = require('big-integer');
+const bigInt = require('big-integer');
 const Decimal = require('decimal.js');
 
-// JSONZ.setBigInt(bigInt);
+JSONZ.setBigInt(bigInt);
 JSONZ.setBigDecimal(Decimal);
 
 require('tap').mochaGlobals();
@@ -228,8 +228,8 @@ t.test('parse(text)', t => {
     );
 
     t.strictSame(
-      JSONZ.parse('[0x21n,-0b1001n,-0o123n]'),
-      [big.toBigInt(33), big.toBigInt(-9), big.toBigInt(-83)],
+      JSONZ.parse('[0x21n,-0xCAFEn,0b11n,-0b1001n,0O17n,-0o123n]'),
+      [big.toBigInt(33), big.toBigInt(-51966), big.toBigInt(3), big.toBigInt(-9), big.toBigInt(15), big.toBigInt(-83)],
       'parses bigints in hex, binary, and octal form'
     );
 
