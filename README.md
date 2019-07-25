@@ -3,12 +3,9 @@
 [![Build Status](https://travis-ci.com/kshetline/json-z.svg?branch=master)][Build Status]
 [![Coverage Status](https://coveralls.io/repos/github/kshetline/json-z/badge.svg?branch=master)](https://coveralls.io/github/kshetline/json-z?branch=master)
 
-JSON-Z is a superset of [JSON] that aims to
-alleviate some of the limitations of JSON by expanding its syntax to include
-some productions from [ECMAScript 5.1].
+JSON-Z is a superset of [JSON] that aims to alleviate some of the limitations of JSON by expanding its syntax to include some productions from [ECMAScript 5.1] and later.
 
-This JavaScript library is the official reference implementation for JSON-Z
-parsing and serialization libraries.
+This JavaScript library is the official reference implementation for JSON-Z parsing and serialization libraries.
 
 [Build Status]: https://travis-ci.org/kshetline/json-z
 
@@ -19,8 +16,7 @@ parsing and serialization libraries.
 [ECMAScript 5.1]: https://www.ecma-international.org/ecma-262/5.1/
 
 ## Summary of Features
-The following ECMAScript 5.1 features, which are not supported in JSON, have
-been extended to JSON-Z.
+The following features, which are not supported in standard JSON, have been added to JSON-Z:
 
 ### Objects
 - Object keys may be an unquoted ECMAScript 5.1 _[IdentifierName]_.
@@ -31,7 +27,7 @@ been extended to JSON-Z.
 - Arrays may have a single trailing comma.
 
 ### Strings
-- Strings may be single quoted or backtick quoted.
+- Strings may be single quoted or backtick quoted (using backticks does not, however, invoke string interpolation).
 - Strings may span multiple lines by escaping new line characters.
 - Strings may include character escapes.
 
@@ -40,8 +36,10 @@ been extended to JSON-Z.
 - Numbers may have a leading or trailing decimal point, and may contain underscores used as separators.
 - Numbers may be [IEEE 754] positive infinity, negative infinity, and NaN.
 - Numbers may begin with an explicit plus sign.
-- Numbers may be `BigInt` values, by appending a lowercase `n` to the end of an integer value, e.g. `100n`. When running a version of JavaScript that does not support `BigInt`, `BigInt` values will be parsed as the closest matching value of type `number`.
-- `BigInt` values can be in decimal, hexadecimal, octal, or binary form. Exponential notation can also be used (e.g. `4.2E12n`) so long as the value including exponent is an integer value.
+- Numbers may be `BigInt` values by appending a lowercase `n` to the end of an integer value, e.g. `9_223_372_036_854_775_807n`.
+- When running a version of JavaScript that does not support native `BigInt` primitives, a third-party `BigInt`-like library can be used.
+- `BigInt` values can be in decimal, hexadecimal, octal, or binary form. Exponential notation can also be used (e.g. `4.2E12n`) so long as the value including its exponent specifies an integer value.
+- Numbers may be extended-precision decimal values by appending  a lowercase `d`, e.g. `3.141592653589793238462643383279d`. (Using a third-party extended-precision library is necessary to take full advantage of this feature.)
 
 ### Comments
 - Single and multi-line comments are allowed.
@@ -64,6 +62,8 @@ No \\n's!",
   hexadecimal: 0xdecaf,
   leadingDecimalPoint: .8675309, andTrailing: 8675309.,
   positiveSign: +1,
+  bigInt: -9223372036854775808n,
+  bigDecimal: 3.141592653589793238462643383279d,
   trailingComma: 'in objects', andIn: ['arrays',],
   "backwardsCompatible": "with JSON",
 }
@@ -96,25 +96,20 @@ The JSON-Z API is compatible with the [JSON API].
 https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/JSON
 
 ### JSONZ.parse()
-Parses a JSON-Z string, constructing the JavaScript value or object described by
-the string. An optional reviver function can be provided to perform a
-transformation on the resulting object before it is returned.
+Parses a JSON-Z string, constructing the JavaScript value or object described by the string. An optional reviver function can be provided to perform a transformation on the resulting object before it is returned.
 
 #### Syntax
     JSONZ.parse(text[, reviver])
 
 #### Parameters
 - `text`: The string to parse as JSON-Z.
-- `reviver`: If a function, this prescribes how the value originally produced by
-  parsing is transformed, before being returned.
+- `reviver`: If a function, this prescribes how the value originally produced by parsing is transformed, before being returned.
 
 #### Return value
 The object corresponding to the given JSON-Z text.
 
 ### JSONZ.stringify()
-Converts a JavaScript value to a JSON-Z string, optionally replacing values if a
-replacer function is specified, or optionally including only the specified
-properties if a replacer array is specified.
+Converts a JavaScript value to a JSON-Z string, optionally replacing values if a replacer function is specified, or optionally including only the specified properties if a replacer array is specified.
 
 #### Syntax
     JSONZ.stringify(value[, replacer[, space]])
@@ -122,19 +117,8 @@ properties if a replacer array is specified.
 
 #### Parameters
 - `value`: The value to convert to a JSON-Z string.
-- `replacer`: A function that alters the behavior of the stringification
-  process, or an array of String and Number objects that serve as a whitelist
-  for selecting/filtering the properties of the value object to be included in
-  the JSON-Z string. If this value is null or not provided, all properties of the
-  object are included in the resulting JSON-Z string.
-- `space`: A String or Number object that's used to insert white space into the
-  output JSON-Z string for readability purposes. If this is a Number, it
-  indicates the number of space characters to use as white space; this number is
-  capped at 10 (if it is greater, the value is just 10). Values less than 1
-  indicate that no space should be used. If this is a String, the string (or the
-  first 10 characters of the string, if it's longer than that) is used as white
-  space. If this parameter is not provided (or is null), no white space is used.
-  If white space is used, trailing commas will be used in objects and arrays.
+- `replacer`: A function that alters the behavior of the stringification process, or an array of String and Number objects that serve as a whitelist for selecting/filtering the properties of the value object to be included in the JSON-Z string. If this value is null or not provided, all properties of the object are included in the resulting JSON-Z string.
+- `space`: A String or Number object that's used to insert white space into the output JSON-Z string for readability purposes. If this is a Number, it indicates the number of space characters to use as white space; this number is capped at 10 (if it is greater, the value is just 10). Values less than 1 indicate that no space should be used. If this is a String, the string (or the first 10 characters of the string, if it's longer than that) is used as white space. If this parameter is not provided (or is null), no white space is used. If white space is used, trailing commas will be used in objects and arrays.
 - `options`: An object with the following properties:
   - `replacer`: Same as the `replacer` parameter.
   - `space`: Same as the `space` parameter.
@@ -144,6 +128,66 @@ properties if a replacer array is specified.
 #### Return value
 
 A JSON-Z string representing the value.
+
+### JSONZ.hasBigInt()
+
+Returns true if JSON-Z is currently providing full big integer support.
+
+### JSONZ.hasNativeBigInt()
+
+Returns true if the currently running version of JavaScript natively supports big integers via `BigInt` and constants such as `100n`.
+
+### JSONZ.hasBigDecimal()
+
+Returns true if JSON-Z is currently providing full big decimal support.
+
+### JSONZ.setBigInt()
+Sets a function or class for handling big integer values, or turns special handling of native JavaScript `BigInt` on or off.
+
+#### Syntax
+    JSONZ.setBigInt(bigIntClass[, bigIntEqualityTest])
+    JSONZ.setBigInt(active)
+
+#### Parameters
+- `bigIntClass`: A function or class responsible for handling big integer values. `bigIntClass(valueAsString, radix)`, e.g. `bigIntClass('123', 10)` or `bigIntClass('D87E', 16)`, must return a big integer object that satifies the test `bigIntValue instanceof bigIntClass`.
+- `bigIntEqualityTest`: This optional function is only needed for software developers running unit tests (see code for details).
+- `active`: If `true`, native `BigInt` support (if available) is activated. If `false`, `BigInt` support is deactivated.
+
+#### Sample usage
+
+```
+npm install json-z
+npm install big-integer
+```
+```
+const JSONZ = require('json-z);
+const bigInt = require('big-integer');
+
+JSONZ.setBigInt(bigInt);
+```
+
+### JSONZ.setBigDouble()
+Sets a function or class for handling extended-precision decimal floating point values.
+
+#### Syntax
+    JSONZ.setBigDouble(bigDoubleClass[, bigDoubleEqualityTest])
+
+#### Parameters
+- `bigDoubleClass`: A function or class responsible for handling big decimal values.`bigDoubleClass(valueAsString)`, e.g. `bigDoubleClass('14.7')`, must return a big decimal object that satifies the test `bigDecimalValue instanceof bigDoubleClass`.
+- `bigDoubleEqualityTest`: This optional function is only needed for software developers running unit tests (see code for details).
+
+#### Sample usage
+
+```
+npm install json-z
+npm install decimal.js
+```
+```
+const JSONZ = require('json-z');
+const Decimal = require('decimal.js');
+
+JSONZ.setBigDecimal(Decimal);
+```
 
 ### Node.js `require()` JSON-Z files
 

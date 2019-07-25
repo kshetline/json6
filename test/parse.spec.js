@@ -212,31 +212,43 @@ t.test('parse(text)', t => {
     t.end();
   });
 
+  function compareBigIntArrays(a, b) {
+    if (a.length !== b.length) {
+      return false;
+    }
+
+    for (let i = 0; i < a.length; ++i) {
+      if (!big.equalBigInt(a[i], b[i])) {
+        return false;
+      }
+    }
+
+    return true;
+  }
+
   t.test('bigints', t => {
     const testDigits = '-408151623426875309';
 
-    t.strictSame(
-      JSONZ.parse(testDigits + 'n'),
-      big.toBigInt(testDigits),
+    t.ok(
+      big.equalBigInt(JSONZ.parse(testDigits + 'n'), big.toBigInt(testDigits)),
       big.hasBigInt() ? 'parses bigint' : 'parses best approximation of bigint'
     );
 
-    t.strictSame(
-      JSONZ.parse('33n'),
-      big.toBigInt('33'),
+    t.ok(
+      big.equalBigInt(JSONZ.parse('33n'), big.toBigInt('33')),
       'parses bigint'
     );
 
-    t.strictSame(
+    t.ok(compareBigIntArrays(
       JSONZ.parse('[0x21n,-0xCAFEn,0b11n,-0b1001n,0O17n,-0o123n]'),
-      [big.toBigInt(33), big.toBigInt(-51966), big.toBigInt(3), big.toBigInt(-9), big.toBigInt(15), big.toBigInt(-83)],
-      'parses bigints in hex, binary, and octal form'
+      [big.toBigInt(33), big.toBigInt(-51966), big.toBigInt(3), big.toBigInt(-9), big.toBigInt(15), big.toBigInt(-83)]),
+    'parses bigints in hex, binary, and octal form'
     );
 
-    t.strictSame(
+    t.ok(compareBigIntArrays(
       JSONZ.parse('[123E3n,-6700e-1n,3.14E3n]'),
-      [big.toBigInt(123000), big.toBigInt(-670), big.toBigInt(3140)],
-      'parses bigints in exponential form'
+      [big.toBigInt(123000), big.toBigInt(-670), big.toBigInt(3140)]),
+    'parses bigints in exponential form'
     );
 
     t.end();
