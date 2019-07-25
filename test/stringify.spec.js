@@ -51,6 +51,12 @@ describe('JSONZ', () => {
       it('stringifies nested objects', () => {
         assert.strictEqual(JSONZ.stringify({a: {b: 2}}), '{a:{b:2}}');
       });
+
+      it('stringifies undefined', () => {
+        assert.strictEqual(JSONZ.stringify(undefined), 'undefined');
+        assert.strictEqual(JSONZ.stringify([1, undefined, 3]), '[1,undefined,3]');
+        assert.strictEqual(JSONZ.stringify({a: 1, b: undefined, c: 2}), '{a:1,b:undefined,c:2}');
+      });
     });
 
     describe('arrays', () => {

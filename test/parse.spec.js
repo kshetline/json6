@@ -116,6 +116,16 @@ t.test('parse(text)', t => {
     t.end();
   });
 
+  t.test('undefined values', t => {
+    t.equal(
+      JSONZ.parse('undefined'),
+      undefined,
+      'parses undefined'
+    );
+
+    t.end();
+  });
+
   t.test('Booleans', t => {
     t.equal(
       JSONZ.parse('true'),

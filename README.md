@@ -47,6 +47,10 @@ The following features, which are not supported in standard JSON, have been adde
 ### White Space
 - Additional white space characters are allowed.
 
+### Undefined
+
+- Handles `undefined` values
+
 [IdentifierName]: https://www.ecma-international.org/ecma-262/5.1/#sec-7.6
 
 [IEEE 754]: http://ieeexplore.ieee.org/servlet/opac?punumber=4610933
@@ -62,6 +66,7 @@ No \\n's!",
   hexadecimal: 0xdecaf,
   leadingDecimalPoint: .8675309, andTrailing: 8675309.,
   positiveSign: +1,
+  notDefined: undefined,
   bigInt: -9223372036854775808n,
   bigDecimal: 3.141592653589793238462643383279d,
   trailingComma: 'in objects', andIn: ['arrays',],
@@ -149,7 +154,7 @@ Sets a function or class for handling big integer values, or turns special handl
     JSONZ.setBigInt(active)
 
 #### Parameters
-- `bigIntClass`: A function or class responsible for handling big integer values. `bigIntClass(valueAsString, radix)`, e.g. `bigIntClass('123', 10)` or `bigIntClass('D87E', 16)`, must return a big integer object that satifies the test `bigIntValue instanceof bigIntClass`.
+- `bigIntClass`: A function or class responsible for handling big integer values. `bigIntClass(valueAsString, radix)`, e.g. `bigIntClass('123', 10)` or `bigIntClass('D87E', 16)`, either with or without a preceding `new`, must return a big integer object that satifies the test `bigIntValue instanceof bigIntClass`.
 - `bigIntEqualityTest`: This optional function is only needed for software developers running unit tests (see code for details).
 - `active`: If `true`, native `BigInt` support (if available) is activated. If `false`, `BigInt` support is deactivated.
 
@@ -173,7 +178,7 @@ Sets a function or class for handling extended-precision decimal floating point 
     JSONZ.setBigDouble(bigDoubleClass[, bigDoubleEqualityTest])
 
 #### Parameters
-- `bigDoubleClass`: A function or class responsible for handling big decimal values.`bigDoubleClass(valueAsString)`, e.g. `bigDoubleClass('14.7')`, must return a big decimal object that satifies the test `bigDecimalValue instanceof bigDoubleClass`.
+- `bigDoubleClass`: A function or class responsible for handling big decimal values.`bigDoubleClass(valueAsString)`, e.g. `bigDoubleClass('14.7')`, either with or without a preceding `new`, must return a big decimal object that satifies the test `bigDecimalValue instanceof bigDoubleClass`.
 - `bigDoubleEqualityTest`: This optional function is only needed for software developers running unit tests (see code for details).
 
 #### Sample usage
