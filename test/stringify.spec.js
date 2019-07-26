@@ -251,48 +251,60 @@ describe('JSONZ', () => {
       assert.strictEqual(JSONZ.stringify([1], null, ''), '[1]');
     });
 
-    it('indents n spaces when a number is provided', () => {
-      assert.strictEqual(JSONZ.stringify([1], null, 2), '[\n  1,\n]');
+    it('does not indent when a single space is provided', () => {
+      assert.strictEqual(JSONZ.stringify([1, 2], null, ' '), '[1, 2]');
+    });
+
+    it('indents n spaces when a number > 1 is provided', () => {
+      assert.strictEqual(JSONZ.stringify([1], null, 2), '[\n  1\n]');
     });
 
     it('does not indent more than 10 spaces when a number is provided', () => {
-      assert.strictEqual(JSONZ.stringify([1], null, 11), '[\n          1,\n]');
+      assert.strictEqual(JSONZ.stringify([1], null, 11), '[\n          1\n]');
     });
 
     it('indents with the string provided', () => {
-      assert.strictEqual(JSONZ.stringify([1], null, '\t'), '[\n\t1,\n]');
+      assert.strictEqual(JSONZ.stringify([1], null, '\t'), '[\n\t1\n]');
     });
 
     it('does not indent more than 10 characters of the string provided', () => {
-      assert.strictEqual(JSONZ.stringify([1], null, '           '), '[\n          1,\n]');
+      assert.strictEqual(JSONZ.stringify([1], null, '           '), '[\n          1\n]');
     });
 
     it('indents in arrays', () => {
-      assert.strictEqual(JSONZ.stringify([1], null, 2), '[\n  1,\n]');
+      assert.strictEqual(JSONZ.stringify([1], null, 2), '[\n  1\n]');
+    });
+
+    it('indents with trailing comma in arrays', () => {
+      assert.strictEqual(JSONZ.stringify([1], {addTrailingComma: true, space: 2}), '[\n  1,\n]');
     });
 
     it('indents in nested arrays', () => {
-      assert.strictEqual(JSONZ.stringify([1, [2], 3], null, 2), '[\n  1,\n  [\n    2,\n  ],\n  3,\n]');
+      assert.strictEqual(JSONZ.stringify([1, [2], 3], null, 2), '[\n  1,\n  [\n    2\n  ],\n  3\n]');
     });
 
     it('indents in objects', () => {
-      assert.strictEqual(JSONZ.stringify({a: 1}, null, 2), '{\n  a: 1,\n}');
+      assert.strictEqual(JSONZ.stringify({a: 1}, null, 2), '{\n  a: 1\n}');
+    });
+
+    it('indents with trailing comma in objects', () => {
+      assert.strictEqual(JSONZ.stringify({a: 1}, {addTrailingComma: true, space: 2}), '{\n  a: 1,\n}');
     });
 
     it('indents in nested objects', () => {
-      assert.strictEqual(JSONZ.stringify({a: {b: 2}}, null, 2), '{\n  a: {\n    b: 2,\n  },\n}');
+      assert.strictEqual(JSONZ.stringify({a: {b: 2}}, null, 2), '{\n  a: {\n    b: 2\n  }\n}');
     });
 
     it('accepts Number objects', () => {
       // eslint-disable-next-line no-new-wrappers
       // noinspection JSPrimitiveTypeWrapperUsage
-      assert.strictEqual(JSONZ.stringify([1], null, new Number(2)), '[\n  1,\n]');
+      assert.strictEqual(JSONZ.stringify([1], null, new Number(2)), '[\n  1\n]');
     });
 
     it('accepts String objects', () => {
       // eslint-disable-next-line no-new-wrappers
       // noinspection JSPrimitiveTypeWrapperUsage
-      assert.strictEqual(JSONZ.stringify([1], null, new String('\t')), '[\n\t1,\n]');
+      assert.strictEqual(JSONZ.stringify([1], null, new String('\t')), '[\n\t1\n]');
     });
   });
 
@@ -377,7 +389,7 @@ describe('JSONZ', () => {
           JSONZ.stringify({}, null, 4);
           return value;
         }, 2),
-        '{\n  a: 1,\n}'
+        '{\n  a: 1\n}'
       );
     });
   });
@@ -388,7 +400,11 @@ describe('JSONZ', () => {
     });
 
     it('accepts space as an option', () => {
-      assert.strictEqual(JSONZ.stringify([1], {space: 2}), '[\n  1,\n]');
+      assert.strictEqual(JSONZ.stringify([1], {space: 2}), '[\n  1\n]');
+    });
+
+    it('accepts addTrailingComma as an option', () => {
+      assert.strictEqual(JSONZ.stringify([1], {addTrailingComma: true, space: 2}), '[\n  1,\n]');
     });
   });
 

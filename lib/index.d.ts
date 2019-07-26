@@ -4,9 +4,10 @@ export type JsonZReplacer = (holder: any, key: string, value: any) => any;
 export type JsonZAllowedKeys = (string | number)[];
 
 export interface JsonZOptions {
-  space: string | number;
+  addTrailingComma: boolean;
   quote: string;
   replacer: JsonZReplacer | JsonZAllowedKeys;
+  space: string | number;
 }
 
 export function parse(text: string, reviver?: JsonZReviver): any;
