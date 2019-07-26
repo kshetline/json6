@@ -1,6 +1,6 @@
 {
   "name": "json-z",
-  "version": "3.0.0-alpha.6",
+  "version": "3.0.0-alpha.7",
   "description": "JSON for everyone.",
   "main": "lib/index.js",
   "bin": "lib/cli.js",
@@ -13,7 +13,7 @@
     "node": ">=6"
   },
   "scripts": {
-    "build": "rollup -c",
+    "build": "rollup -c && copyfiles -f lib/index.d.ts dist/",
     "build-package": "node build/package.js",
     "build-unicode": "node build/unicode.js",
     "coverage": "tap --coverage-report html test",
@@ -62,6 +62,7 @@
   },
   "devDependencies": {
     "big-integer": "^1.6.44",
+    "copyfiles": "^2.1.1",
     "core-js": "^2.6.5",
     "coveralls": "^3.0.5",
     "decimal.js": "^10.2.0",
