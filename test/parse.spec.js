@@ -389,7 +389,7 @@ t.test('parse(text, reviver)', t => {
   );
 
   t.strictSame(
-    JSONZ.parse('{a:1,b:2}', (k, v) => (k === 'a') ? undefined : v),
+    JSONZ.parse('{a:1,b:2}', (k, v) => (k === 'a') ? JSONZ.DELETE : v),
     {b: 2},
     'deletes property values'
   );
@@ -408,9 +408,15 @@ t.test('parse(text, reviver)', t => {
 
   // noinspection JSConsecutiveCommasInArrayLiteral
   t.strictSame(
-    JSONZ.parse('[0,1,2]', (k, v) => (k === '1') ? undefined : v),
+    JSONZ.parse('[0,1,2]', (k, v) => (k === '1') ? JSONZ.DELETE : v),
     [0, , 2], // eslint-disable-line no-sparse-arrays
     'deletes array values'
+  );
+
+  t.strictSame(
+    JSONZ.parse('33', (k, v) => JSONZ.DELETE),
+    undefined,
+    'returns undefined if top-level value is deleted'
   );
 
   t.equal(
