@@ -77,6 +77,11 @@ describe('JSONZ', () => {
       it('stringifies nested arrays', () => {
         assert.strictEqual(JSONZ.stringify([1, [2, 3]]), '[1,[2,3]]');
       });
+
+      it('stringifies sparse arrays', () => {
+        // noinspection JSConsecutiveCommasInArrayLiteral
+        assert.strictEqual(JSONZ.stringify([1,, 2]), '[1,,2]'); // eslint-disable-line no-sparse-arrays
+      });
     });
 
     it('stringifies nulls', () => {
@@ -310,6 +315,34 @@ describe('JSONZ', () => {
       assert.strictEqual(
         JSONZ.stringify({a: 1, b: 2}, (key, value) => (key === 'a') ? 2 : value),
         '{a:2,b:2}'
+      );
+    });
+
+    it('deletes object values when a replacer returns DELETE', () => {
+      assert.strictEqual(
+        JSONZ.stringify({a: 1, b: 2}, (key, value) => (key === 'b') ? JSONZ.DELETE : value),
+        '{a:1}'
+      );
+    });
+
+    it('can transform object values into undefined values with replacer', () => {
+      assert.strictEqual(
+        JSONZ.stringify({a: 1, b: 2}, (key, value) => (key === 'b') ? undefined : value),
+        '{a:1,b:undefined}'
+      );
+    });
+
+    it('creates empty array slots when a replacer returns DELETE', () => {
+      assert.strictEqual(
+        JSONZ.stringify([1, 77, 3], (key, value) => (value === 77) ? JSONZ.DELETE : value),
+        '[1,,3]'
+      );
+    });
+
+    it('can transform array values into undefined values with replacer', () => {
+      assert.strictEqual(
+        JSONZ.stringify([1, 77, 3], (key, value) => (value === 77) ? undefined : value),
+        '[1,undefined,3]'
       );
     });
 

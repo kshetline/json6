@@ -481,6 +481,30 @@ describe('JSONZ', () => {
         ));
       });
 
+      it('throws on initial comma in object', () => {
+        assert.throws(() => {
+          JSONZ.parse('{,a:1,b:2}');
+        },
+        err => (
+          err instanceof SyntaxError &&
+                        /^JSON-Z: invalid character ','/.test(err.message) &&
+                        err.lineNumber === 1 &&
+                        err.columnNumber === 2
+        ));
+      });
+
+      it('throws on consecutive commas in object', () => {
+        assert.throws(() => {
+          JSONZ.parse('{a:1,,b:2}');
+        },
+        err => (
+          err instanceof SyntaxError &&
+                        /^JSON-Z: invalid character ','/.test(err.message) &&
+                        err.lineNumber === 1 &&
+                        err.columnNumber === 6
+        ));
+      });
+
       it('throws on unclosed arrays before values', () => {
         assert.throws(() => {
           JSONZ.parse('[');

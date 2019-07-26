@@ -103,6 +103,13 @@ t.test('parse(text)', t => {
       'parses nested arrays'
     );
 
+    // noinspection JSConsecutiveCommasInArrayLiteral
+    t.strictSame(
+      JSONZ.parse('[1,,2]'),
+      // eslint-disable-next-line no-sparse-arrays
+      [1,, 2],
+      'parses sparse array'
+    );
     t.end();
   });
 
@@ -414,7 +421,7 @@ t.test('parse(text, reviver)', t => {
   );
 
   t.strictSame(
-    JSONZ.parse('33', (k, v) => JSONZ.DELETE),
+    JSONZ.parse('33', () => JSONZ.DELETE),
     undefined,
     'returns undefined if top-level value is deleted'
   );

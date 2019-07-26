@@ -25,6 +25,7 @@ The following features, which are not supported in standard JSON, have been adde
 
 ### Arrays
 - Arrays may have a single trailing comma.
+- Arrays may be sparse, e.g. `[1, , 3, 4]`.
 
 ### Strings
 - Strings may be single quoted or backtick quoted (using backticks does not, however, invoke string interpolation).
@@ -49,7 +50,12 @@ The following features, which are not supported in standard JSON, have been adde
 
 ### Undefined
 
-- Handles `undefined` values
+- Handles `undefined` values.
+
+### Replacer functions
+
+- As part of handling `undefined` values, when a replacer function returns `undefined`, that will itself become the encoded value of the value which has been replaced.
+- Replacer functions can return the special value `JSONZ.DELETE` to indicate the a key/value pair in an object be deleted, or that a slot in an array be left empty.
 
 [IdentifierName]: https://www.ecma-international.org/ecma-262/5.1/#sec-7.6
 
@@ -70,6 +76,7 @@ No \\n's!",
   bigInt: -9223372036854775808n,
   bigDecimal: 3.141592653589793238462643383279m,
   trailingComma: 'in objects', andIn: ['arrays',],
+  sparseArray: [1, 2, , , 5],
   "backwardsCompatible": "with JSON",
 }
 ```
