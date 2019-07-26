@@ -278,7 +278,7 @@ t.test('parse(text)', t => {
 
     for (let testValue of testValues) {
       let bdTestValue = big.toBigDecimal(testValue.replace(/_/g, ''));
-      let parsedValue = JSONZ.parse(testValue + 'd');
+      let parsedValue = JSONZ.parse(testValue + 'm');
 
       t.ok(
         big.equalBigDecimal(bdTestValue, parsedValue),
@@ -316,7 +316,7 @@ t.test('parse(text)', t => {
     t.equal(
       JSONZ.parse(`'\\b\\f\\n\\r\\t\\v\\0\\x0f\\u01fF\\\n\\\r\n\\\r\\\u2028\\\u2029\\a\\'\\"'`),
       `\b\f\n\r\t\v\0\x0f\u01FF\a'"`, // eslint-disable-line no-useless-escape
-      'parses escpaed characters'
+      'parses escaped characters'
     );
 
     t.test('parses line and paragraph separators with a warning', t => {
@@ -406,6 +406,7 @@ t.test('parse(text, reviver)', t => {
     'modifies nested array values'
   );
 
+  // noinspection JSConsecutiveCommasInArrayLiteral
   t.strictSame(
     JSONZ.parse('[0,1,2]', (k, v) => (k === '1') ? undefined : v),
     [0, , 2], // eslint-disable-line no-sparse-arrays

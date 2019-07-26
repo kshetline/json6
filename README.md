@@ -39,7 +39,7 @@ The following features, which are not supported in standard JSON, have been adde
 - Numbers may be `BigInt` values by appending a lowercase `n` to the end of an integer value, e.g. `9_223_372_036_854_775_807n`.
 - When running a version of JavaScript that does not support native `BigInt` primitives, a third-party `BigInt`-like library can be used.
 - `BigInt` values can be in decimal, hexadecimal, octal, or binary form. Exponential notation can also be used (e.g. `4.2E12n`) so long as the value including its exponent specifies an integer value.
-- Numbers may be extended-precision decimal values by appending  a lowercase `d`, e.g. `3.141592653589793238462643383279d`. (Using a third-party extended-precision library is necessary to take full advantage of this feature.)
+- Numbers may be extended-precision decimal values by appending a lowercase `m`, e.g. `3.141592653589793238462643383279m`. (Using a third-party extended-precision library is necessary to take full advantage of this feature.)
 
 ### Comments
 - Single and multi-line comments are allowed.
@@ -68,7 +68,7 @@ No \\n's!",
   positiveSign: +1,
   notDefined: undefined,
   bigInt: -9223372036854775808n,
-  bigDecimal: 3.141592653589793238462643383279d,
+  bigDecimal: 3.141592653589793238462643383279m,
   trailingComma: 'in objects', andIn: ['arrays',],
   "backwardsCompatible": "with JSON",
 }

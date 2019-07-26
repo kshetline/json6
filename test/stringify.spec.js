@@ -1,3 +1,4 @@
+/* eslint-disable no-new-wrappers */
 const assert = require('assert');
 const JSONZ = require('../lib');
 const big = require('../lib/bignumber-util');
@@ -37,6 +38,7 @@ describe('JSONZ', () => {
       });
 
       it('stringifies unicode property names', () => {
+        // noinspection NonAsciiCharacters
         assert.strictEqual(JSONZ.stringify({'ùńîċõďë': 9}), '{ùńîċõďë:9}');
       });
 
@@ -104,11 +106,13 @@ describe('JSONZ', () => {
 
       it('stringifies true Boolean objects', () => {
         // eslint-disable-next-line no-new-wrappers
+        // noinspection JSPrimitiveTypeWrapperUsage
         assert.strictEqual(JSONZ.stringify(new Boolean(true)), 'true');
       });
 
       it('stringifies false Boolean objects', () => {
         // eslint-disable-next-line no-new-wrappers
+        // noinspection JSPrimitiveTypeWrapperUsage
         assert.strictEqual(JSONZ.stringify(new Boolean(false)), 'false');
       });
     });
@@ -124,6 +128,7 @@ describe('JSONZ', () => {
 
       it('stringifies Number objects', () => {
         // eslint-disable-next-line no-new-wrappers
+        // noinspection JSPrimitiveTypeWrapperUsage
         assert.strictEqual(JSONZ.stringify(new Number(-1.2)), '-1.2');
       });
     });
@@ -140,8 +145,8 @@ describe('JSONZ', () => {
     if (big.hasBigDecimal()) {
       describe('bigdecimals', () => {
         it('stringifies bigdecimals', () => {
-          assert.strictEqual(JSONZ.stringify([big.toBigDecimal('3.141592653589793238462643383279')]), '[3.141592653589793238462643383279d]');
-          assert.strictEqual(JSONZ.stringify(big.toBigDecimal('-4081516234268675309')), '-4081516234268675309d');
+          assert.strictEqual(JSONZ.stringify([big.toBigDecimal('3.141592653589793238462643383279')]), '[3.141592653589793238462643383279m]');
+          assert.strictEqual(JSONZ.stringify(big.toBigDecimal('-4081516234268675309')), '-4081516234268675309m');
         });
       });
     }
@@ -173,6 +178,7 @@ describe('JSONZ', () => {
 
       it('stringifies String objects', () => {
         // eslint-disable-next-line no-new-wrappers
+        // noinspection JSPrimitiveTypeWrapperUsage
         assert.strictEqual(JSONZ.stringify(new String('abc')), "'abc'");
       });
     });
@@ -274,11 +280,13 @@ describe('JSONZ', () => {
 
     it('accepts Number objects', () => {
       // eslint-disable-next-line no-new-wrappers
+      // noinspection JSPrimitiveTypeWrapperUsage
       assert.strictEqual(JSONZ.stringify([1], null, new Number(2)), '[\n  1,\n]');
     });
 
     it('accepts String objects', () => {
       // eslint-disable-next-line no-new-wrappers
+      // noinspection JSPrimitiveTypeWrapperUsage
       assert.strictEqual(JSONZ.stringify([1], null, new String('\t')), '[\n\t1,\n]');
     });
   });
@@ -294,6 +302,7 @@ describe('JSONZ', () => {
 
     it('accepts String and Number objects when an array is provided', () => {
       // eslint-disable-next-line no-new-wrappers
+      // noinspection JSPrimitiveTypeWrapperUsage,JSPrimitiveTypeWrapperUsage
       assert.strictEqual(JSONZ.stringify({a: 1, b: 2, 3: 3}, [new String('a'), new Number(3)]), "{a:1,'3':3}");
     });
 
