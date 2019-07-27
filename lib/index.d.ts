@@ -11,19 +11,25 @@ export enum Quote {
 }
 
 export interface JsonZOptions {
-  addTrailingComma: boolean;
+  expandedPrimitives: boolean,
   quote: '"' | "'" | Quote;
   quoteAllKeys: boolean;
   replacer: JsonZReplacer | JsonZAllowedKeys;
-  space: string | number;
+  space: string | number | String | Number;
+  sparseArrays: boolean;
+  trailingComma: boolean;
 }
 
 export function parse(text: string, reviver?: JsonZReviver): any;
 
-export function stringify(value: any, replacer?: JsonZReplacer | JsonZAllowedKeys, space?: string | number): string;
-export function stringify(value: any, options: JsonZOptions): string;
+export function stringify(value: any, replacer?: JsonZReplacer | JsonZAllowedKeys,
+                          space?: string | number | String | Number): string;
+export function stringify(value: any, options?: JsonZOptions,
+                          space?: string | number | String | Number): string;
 
 export function setOptions(options: JsonZOptions): void;
+
+export function resetOptions(): void;
 
 export const DELETE: Symbol;
 

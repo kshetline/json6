@@ -8,8 +8,10 @@ const Decimal = require('decimal.js');
 JSONZ.setBigInt(bigInt);
 JSONZ.setBigDecimal(Decimal);
 JSONZ.setOptions({
+  expandedPrimitives: true,
   quote: JSONZ.Quote.PREFER_SINGLE,
   quoteAllKeys: false,
+  sparseArrays: true,
 });
 
 require('tap').mochaGlobals();
@@ -86,6 +88,12 @@ describe('JSONZ', () => {
         // noinspection JSConsecutiveCommasInArrayLiteral
         assert.strictEqual(JSONZ.stringify([1,, 2]), '[1,,2]'); // eslint-disable-line no-sparse-arrays
       });
+
+      it('stringifies sparse arrays with null for JSON compatibility', () => {
+        // noinspection JSConsecutiveCommasInArrayLiteral
+        assert.strictEqual(JSONZ.stringify([1,, 2], // eslint-disable-line no-sparse-arrays
+          {expandedPrimitives: false, sparseArrays: false}), '[1,null,2]');
+      });
     });
 
     it('stringifies nulls', () => {
@@ -148,6 +156,13 @@ describe('JSONZ', () => {
           assert.strictEqual(JSONZ.stringify([big.toBigInt('4081516234268675309')]), '[4081516234268675309n]');
           assert.strictEqual(JSONZ.stringify(big.toBigInt('-4081516234268675309')), '-4081516234268675309n');
         });
+
+        it('stringifies bigint values for standard JSON', () => {
+          assert.strictEqual(JSONZ.stringify(
+            big.toBigInt('4081516234268675309'),
+            {expandedPrimitives: false, quote: JSONZ.Quote.PREFER_DOUBLE}),
+          '"4081516234268675309"');
+        });
       });
     }
 
@@ -156,6 +171,18 @@ describe('JSONZ', () => {
         it('stringifies bigdecimals', () => {
           assert.strictEqual(JSONZ.stringify([big.toBigDecimal('3.141592653589793238462643383279')]), '[3.141592653589793238462643383279m]');
           assert.strictEqual(JSONZ.stringify(big.toBigDecimal('-4081516234268675309')), '-4081516234268675309m');
+        });
+
+        it('stringifies bigdecimal special values', () => {
+          assert.strictEqual(JSONZ.stringify([big.toBigDecimal(1 / 0), big.toBigDecimal(-1 / 0), big.toBigDecimal(0 / 0)]),
+            '[Infinity,-Infinity,NaN]');
+        });
+
+        it('stringifies bigdecimal values for standard JSON', () => {
+          assert.strictEqual(JSONZ.stringify(
+            [big.toBigDecimal(1 / 0), big.toBigDecimal(-1 / 0), big.toBigDecimal(0 / 0), big.toBigDecimal('3.14')],
+            {expandedPrimitives: false, quote: JSONZ.Quote.PREFER_DOUBLE}),
+          '[null,null,null,"3.14"]');
         });
       });
     }
@@ -288,7 +315,7 @@ describe('JSONZ', () => {
     });
 
     it('indents with trailing comma in arrays', () => {
-      assert.strictEqual(JSONZ.stringify([1], {addTrailingComma: true, space: 2}), '[\n  1,\n]');
+      assert.strictEqual(JSONZ.stringify([1], {trailingComma: true, space: 2}), '[\n  1,\n]');
     });
 
     it('indents in nested arrays', () => {
@@ -300,7 +327,7 @@ describe('JSONZ', () => {
     });
 
     it('indents with trailing comma in objects', () => {
-      assert.strictEqual(JSONZ.stringify({a: 1}, {addTrailingComma: true, space: 2}), '{\n  a: 1,\n}');
+      assert.strictEqual(JSONZ.stringify({a: 1}, {trailingComma: true, space: 2}), '{\n  a: 1,\n}');
     });
 
     it('indents in nested objects', () => {
@@ -415,8 +442,8 @@ describe('JSONZ', () => {
       assert.strictEqual(JSONZ.stringify([1], {space: 2}), '[\n  1\n]');
     });
 
-    it('accepts addTrailingComma as an option', () => {
-      assert.strictEqual(JSONZ.stringify([1], {addTrailingComma: true, space: 2}), '[\n  1,\n]');
+    it('accepts trailingComma as an option', () => {
+      assert.strictEqual(JSONZ.stringify([1], {trailingComma: true, space: 2}), '[\n  1,\n]');
     });
   });
 
@@ -427,6 +454,30 @@ describe('JSONZ', () => {
 
     it('uses single quotes if provided', () => {
       assert.strictEqual(JSONZ.stringify({"a'": "1'"}, {quote: "'"}), "{'a\\'':'1\\''}");
+    });
+  });
+
+  describe('global stringify options', () => {
+    it('formats mostly like standard JSON using default options', () => {
+      JSONZ.resetOptions();
+      assert.strictEqual(JSONZ.stringify({a: 1}), '{"a":1}');
+    });
+
+    it('setting null global options has no effect', () => {
+      JSONZ.setOptions(null);
+      assert.strictEqual(JSONZ.stringify({a: 1}), '{"a":1}');
+    });
+
+    it('global options work', () => {
+      JSONZ.setOptions({
+        quote: JSONZ.Quote.PREFER_SINGLE,
+        space: '  ',
+        trailingComma: true,
+      });
+      assert.strictEqual(JSONZ.stringify({a: 1, b: [1, 2]}), "{\n  'a': 1,\n  'b': [\n    1,\n    2,\n  ],\n}");
+
+      JSONZ.setOptions({quote: JSONZ.Quote.PREFER_DOUBLE});
+      assert.strictEqual(JSONZ.stringify({a: 1, b: [1, 2]}), '{\n  "a": 1,\n  "b": [\n    1,\n    2,\n  ],\n}');
     });
   });
 });

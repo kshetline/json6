@@ -3,7 +3,9 @@
 [![Build Status](https://travis-ci.com/kshetline/json-z.svg?branch=master)][Build Status]
 [![Coverage Status](https://coveralls.io/repos/github/kshetline/json-z/badge.svg?branch=master)](https://coveralls.io/github/kshetline/json-z?branch=master)
 
-JSON-Z is a superset of [JSON] that aims to alleviate some of the limitations of JSON by expanding its syntax to include some productions from [ECMAScript 5.1] and later.
+JSON-Z is a superset of [JSON] that aims to alleviate some of the limitations of JSON by expanding its syntax to include some productions from [ECMAScript 5.1], [ECMAScript 6.0], and later.
+
+The goal of JSON-Z is to increase flexibilty of parsing while, by default, maintaining maximum compatibility with standard JSON for stringification. JSON-Z output, like JSON, is also valid JavaScript (with one optional exception, matching a possible future JavaScript feature).
 
 This JavaScript library is the official reference implementation for JSON-Z parsing and serialization libraries.
 
@@ -14,6 +16,8 @@ This JavaScript library is the official reference implementation for JSON-Z pars
 [JSON]: https://tools.ietf.org/html/rfc7159
 
 [ECMAScript 5.1]: https://www.ecma-international.org/ecma-262/5.1/
+
+[ECMAScript 6.0]: https://www.ecma-international.org/ecma-262/6.0/index.html
 
 ## Summary of Features
 The following features, which are not supported in standard JSON, have been added to JSON-Z:
@@ -102,7 +106,7 @@ const JSONZ = require('json-z')
 This will create a global `JSONZ` variable.
 
 ## API
-The JSON-Z API is compatible with the [JSON API].
+The JSON-Z API is compatible with the [JSON API]. Type definitions to support TypeScript are included.
 
 [JSON API]:
 https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/JSON
@@ -130,12 +134,21 @@ Converts a JavaScript value to a JSON-Z string, optionally replacing values if a
 #### Parameters
 - `value`: The value to convert to a JSON-Z string.
 - `replacer`: A function that alters the behavior of the stringification process, or an array of String and Number objects that serve as a whitelist for selecting/filtering the properties of the value object to be included in the JSON-Z string. If this value is null or not provided, all properties of the object are included in the resulting JSON-Z string.
-- `space`: A String or Number object that's used to insert white space into the output JSON-Z string for readability purposes. If this is a Number, it indicates the number of space characters to use as white space; this number is capped at 10 (if it is greater, the value is just 10). Values less than 1 indicate that no space should be used. If this is a String, the string (or the first 10 characters of the string, if it's longer than that) is used as white space. If this parameter is not provided (or is null), no white space is used. If white space is used, trailing commas will be used in objects and arrays.
+
+  When using the standard `JSON.stringify()`, a replacer function is called with two arguments: `key` and `value`. JSON-Z adds a third argument, `holder`. This value is already available to standard `function`s as `this`, but `this` won't be bound to `holder` when using an anonymous (arrow) function as a replacer, so the third argument (which can be ignored if not needed) provides alternative access to the `holder` value.
+- `space`: A string or number that is used to insert white space into the output JSON-Z string for readability purposes. If this is a number, it indicates the number of space characters to use as white space; this number is capped at 10. Values less than 1 indicate that no space should be used. If this is a string, the string (or the first 10 characters of the string, if it's longer than that) is used as white space. A single space adds white space without adding indentation. If this parameter is not provided (or is null), no white space is used. If indenting white space is used, trailing commas can optionally appear in objects and arrays.
 - `options`: An object with the following properties:
+  - `expandedPrimitives`: If `true` (the default is `false`) this enables direct stringification of `Infinity`, `-Infinity`, `NaN`, big integers using the '`n`' suffix, and big decimals using the '`m`' suffix. Otherwise `Infinity`, `-Infinity`, and `NaN` become `null`, and big integers and big decimals are quoted. (Note: The '`m`' suffix can't be parsed as current valid JavaScript, but it is potentially a future valid standard notation.)
+  - `quote`: A string representing the quote character to use when serializing strings (single quote `'` or double quote `"`), or one of the following values:
+    - `JSONZ.Quote.DOUBLE`: Always quote with double quotes (this is the default).
+    - `JSONZ.Quote.SINGLE`: Always quote with single quotes.
+    - `JSONZ.Quote.PREFER_DOUBLE`: Quote with double quotes, but switch to single quotes or backticks to reduce the number of characters which have to be backslash escaped.
+    - `JSONZ.Quote.PREFER_SINGLE`: Quote with single quotes, but switch to single quotes or backticks to reduce the number of characters which have to be backslash escaped.
+  - `quoteAllKeys`: By default (a `true` value), object keys are quoted, just as in standard JSON. If set to `false` quotes are omitted unless syntactically necessary.
   - `replacer`: Same as the `replacer` parameter.
-  - `space`: Same as the `space` parameter.
-  - `quote`: A String representing the quote character to use when serializing
-    strings.
+  - `space`: Same as the `space` parameter. The default is no spacing.
+  - `sparseArrays`: If `true` (the default is `false`) empty slots in arrays are represented with consecutive commas, e.g. `[1,,3]`. This can't be parsed as valid standard JSON, so by default such an array will be stringified as `[1,null,3]`
+  - trailingComma: If `true` (the default is `false`), the final item in an indented object or array has a terminating comma.
 
 #### Return value
 
