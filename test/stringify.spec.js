@@ -7,6 +7,10 @@ const Decimal = require('decimal.js');
 
 JSONZ.setBigInt(bigInt);
 JSONZ.setBigDecimal(Decimal);
+JSONZ.setOptions({
+  quote: JSONZ.Quote.PREFER_SINGLE,
+  quoteAllKeys: false,
+});
 
 require('tap').mochaGlobals();
 
@@ -166,15 +170,23 @@ describe('JSONZ', () => {
       });
 
       it('stringifies escaped characters', () => {
-        assert.strictEqual(JSONZ.stringify('\\\b\f\n\r\t\v\0\x0f'), "'\\\\\\b\\f\\n\\r\\t\\v\\0\\x0f'");
+        assert.strictEqual(JSONZ.stringify('\\\b\f\n\r\t\v\0\x0f'), "'\\\\\\b\\f\\n\\r\\t\\v\\0\\x0F'");
+      });
+
+      it('stringifies with backtick quoting', () => {
+        assert.strictEqual(JSONZ.stringify(`'"`), `\`'"\``);
       });
 
       it('stringifies escaped single quotes', () => {
-        assert.strictEqual(JSONZ.stringify(`'"`), `'\\'"'`);
+        assert.strictEqual(JSONZ.stringify(`\`'"`), '\'`\\\'"\'');
       });
 
       it('stringifies escaped double quotes', () => {
-        assert.strictEqual(JSONZ.stringify(`''"`), `"''\\""`);
+        assert.strictEqual(JSONZ.stringify(`\`''"`), "\"`''\\\"\"");
+      });
+
+      it('stringifies escaped backticks', () => {
+        assert.strictEqual(JSONZ.stringify(`\`''""`), `\`\\\`''""\``);
       });
 
       it('stringifies escaped line and paragraph separators', () => {
