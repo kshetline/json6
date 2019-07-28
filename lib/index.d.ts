@@ -39,6 +39,6 @@ export function hasNativeBigInt(): boolean;
 
 export function hasBigDecimal(): boolean;
 
-export function setBigInt<T extends Function>(bigIntClass: T | boolean, bigIntEqualityTest?: (a: T, b: T) => boolean): void;
+export function setBigInt(bigIntClass: Function | boolean): void;
 
-export function setBigDecimal<T extends Function>(bigDoubleClass: T, bigDoubleEqualityTest?: (a: T, b: T) => boolean): void;
+export function setBigDecimal(bigDoubleClass: Function): void;

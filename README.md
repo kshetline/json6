@@ -41,6 +41,7 @@ The following features, which are not supported in standard JSON, have been adde
 - Numbers may have a leading or trailing decimal point, and may contain underscores used as separators.
 - Numbers may be [IEEE 754] positive infinity, negative infinity, and NaN.
 - Numbers may begin with an explicit plus sign.
+- Negative zero (`-0`) is parsed and stringified as distinct from positive 0.
 - Numbers may be `BigInt` values by appending a lowercase `n` to the end of an integer value, e.g. `9_223_372_036_854_775_807n`.
 - When running a version of JavaScript that does not support native `BigInt` primitives, a third-party `BigInt`-like library can be used.
 - `BigInt` values can be in decimal, hexadecimal, octal, or binary form. Exponential notation can also be used (e.g. `4.2E12n`) so long as the value including its exponent specifies an integer value.
@@ -71,10 +72,16 @@ The following features, which are not supported in standard JSON, have been adde
   // comments
   unquoted: 'and you can quote me on that',
   singleQuotes: 'I can use "double quotes" here',
+  backtickQuotes: `I can use "double quotes"  and 'single quotes' here`,
   lineBreaks: "Look, Mom! \
 No \\n's!",
+  million: 1_000_000, // Underscore separators in numbers allowed
   hexadecimal: 0xdecaf,
+  // Leading 0 indicates octal if no non-octal (8, 9) digits follow 
+  octal: [0o7, 074],
+  binary: 0b100101,
   leadingDecimalPoint: .8675309, andTrailing: 8675309.,
+  negativeZero: -0,
   positiveSign: +1,
   notDefined: undefined,
   bigInt: -9223372036854775808n,
@@ -170,12 +177,11 @@ Returns true if JSON-Z is currently providing full big decimal support.
 Sets a function or class for handling big integer values, or turns special handling of native JavaScript `BigInt` on or off.
 
 #### Syntax
-    JSONZ.setBigInt(bigIntClass[, bigIntEqualityTest])
+    JSONZ.setBigInt(bigIntClass)
     JSONZ.setBigInt(active)
 
 #### Parameters
 - `bigIntClass`: A function or class responsible for handling big integer values. `bigIntClass(valueAsString, radix)`, e.g. `bigIntClass('123', 10)` or `bigIntClass('D87E', 16)`, either with or without a preceding `new`, must return a big integer object that satifies the test `bigIntValue instanceof bigIntClass`.
-- `bigIntEqualityTest`: This optional function is only needed for software developers running unit tests (see code for details).
 - `active`: If `true`, native `BigInt` support (if available) is activated. If `false`, `BigInt` support is deactivated.
 
 #### Sample usage
@@ -195,11 +201,10 @@ JSONZ.setBigInt(bigInt);
 Sets a function or class for handling extended-precision decimal floating point values.
 
 #### Syntax
-    JSONZ.setBigDouble(bigDoubleClass[, bigDoubleEqualityTest])
+    JSONZ.setBigDouble(bigDoubleClass)
 
 #### Parameters
 - `bigDoubleClass`: A function or class responsible for handling big decimal values.`bigDoubleClass(valueAsString)`, e.g. `bigDoubleClass('14.7')`, either with or without a preceding `new`, must return a big decimal object that satifies the test `bigDecimalValue instanceof bigDoubleClass`.
-- `bigDoubleEqualityTest`: This optional function is only needed for software developers running unit tests (see code for details).
 
 #### Sample usage
 

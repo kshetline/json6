@@ -8,6 +8,48 @@ const Decimal = require('decimal.js');
 JSONZ.setBigInt(bigInt);
 JSONZ.setBigDecimal(Decimal);
 
+function equalBigInt(a, b) {
+  if (a === b) {
+    return true;
+  }
+  else if (!!a !== !!b || !a) {
+    return false;
+  }
+  else if (typeof a.equals === 'function') {
+    return a.equals(b);
+  }
+  else if (typeof a.compare === 'function') {
+    return a.compare(b) === 0;
+  }
+  else if (typeof a.comparedTo === 'function') {
+    return a.comparedTo(b) === 0;
+  }
+  else {
+    return undefined;
+  }
+}
+
+function equalBigDecimal(a, b) {
+  if (a === b) {
+    return true;
+  }
+  else if (!!a !== !!b || !a) {
+    return false;
+  }
+  else if (typeof a.equals === 'function') {
+    return a.equals(b);
+  }
+  else if (typeof a.compare === 'function') {
+    return a.compare(b) === 0;
+  }
+  else if (typeof a.comparedTo === 'function') {
+    return a.comparedTo(b) === 0;
+  }
+  else {
+    return undefined;
+  }
+}
+
 require('tap').mochaGlobals();
 
 const t = require('tap');
@@ -157,8 +199,8 @@ t.test('parse(text)', t => {
     );
 
     t.strictSame(
-      JSONZ.parse('[1,23,456,7890]'),
-      [1, 23, 456, 7890],
+      JSONZ.parse('[1,23,456,7890,09,-08]'),
+      [1, 23, 456, 7890, 9, -8],
       'parses integers'
     );
 
@@ -205,8 +247,8 @@ t.test('parse(text)', t => {
     );
 
     t.strictSame(
-      JSONZ.parse('[0o7,0o10,0O755,-0o123,0o2_3]'),
-      [7, 8, 493, -83, 19],
+      JSONZ.parse('[0o7,0o10,0O755,-0o123,0o2_3,010,-010]'),
+      [7, 8, 493, -83, 19, 8, -8],
       'parses octal numbers'
     );
 
@@ -235,7 +277,7 @@ t.test('parse(text)', t => {
     }
 
     for (let i = 0; i < a.length; ++i) {
-      if (!big.equalBigInt(a[i], b[i])) {
+      if (!equalBigInt(a[i], b[i])) {
         return false;
       }
     }
@@ -246,13 +288,22 @@ t.test('parse(text)', t => {
   t.test('bigints', t => {
     const testDigits = '-408151623426875309';
 
+    t.ok(big.hasNativeBigInt() !== undefined, 'can determine native BigInt support');
+
+    JSONZ.setBigInt(true);
+    t.ok(big.hasNativeBigInt() === big.hasBigInt(), 'can activate native BigInt support');
+
+    JSONZ.setBigInt(null);
+    t.ok(big.getBigIntType() === 'numeric', 'can disable BigInt support');
+    JSONZ.setBigInt(bigInt);
+
     t.ok(
-      big.equalBigInt(JSONZ.parse(testDigits + 'n'), big.toBigInt(testDigits)),
+      equalBigInt(JSONZ.parse(testDigits + 'n'), big.toBigInt(testDigits)),
       big.hasBigInt() ? 'parses bigint' : 'parses best approximation of bigint'
     );
 
     t.ok(
-      big.equalBigInt(JSONZ.parse('33n'), big.toBigInt('33')),
+      equalBigInt(JSONZ.parse('33n'), big.toBigInt('33')),
       'parses bigint'
     );
 
@@ -284,14 +335,18 @@ t.test('parse(text)', t => {
     ];
 
     for (let testValue of testValues) {
-      let bdTestValue = big.toBigDecimal(testValue.replace(/_/g, ''));
-      let parsedValue = JSONZ.parse(testValue + 'm');
+      const bdTestValue = big.toBigDecimal(testValue.replace(/_/g, ''));
+      const parsedValue = JSONZ.parse(testValue + 'm');
 
       t.ok(
-        big.equalBigDecimal(bdTestValue, parsedValue),
+        equalBigDecimal(bdTestValue, parsedValue),
         big.hasBigDecimal() ? 'parses bigdecimal' : 'parses best approximation of bigdecimal'
       );
     }
+
+    JSONZ.setBigDecimal(null);
+    t.ok(big.getBigDecimalType() === 'numeric', 'can disable big decimal support');
+    JSONZ.setBigDecimal(Decimal);
 
     t.end();
   });

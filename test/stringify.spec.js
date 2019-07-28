@@ -139,6 +139,10 @@ describe('JSONZ', () => {
         assert.strictEqual(JSONZ.stringify(-1.2), '-1.2');
       });
 
+      it('stringifies distinct negative zero', () => {
+        assert.strictEqual(JSONZ.stringify(-0), '-0');
+      });
+
       it('stringifies non-finite numbers', () => {
         assert.strictEqual(JSONZ.stringify([Infinity, -Infinity, NaN]), '[Infinity,-Infinity,NaN]');
       });
@@ -176,6 +180,10 @@ describe('JSONZ', () => {
         it('stringifies bigdecimal special values', () => {
           assert.strictEqual(JSONZ.stringify([big.toBigDecimal(1 / 0), big.toBigDecimal(-1 / 0), big.toBigDecimal(0 / 0)]),
             '[Infinity,-Infinity,NaN]');
+        });
+
+        it('stringifies distinct bigdecimal negative zero', () => {
+          assert.strictEqual(JSONZ.stringify(big.toBigDecimal('-0')), '-0m');
         });
 
         it('stringifies bigdecimal values for standard JSON', () => {
