@@ -334,7 +334,7 @@ t.test('parse(text)', t => {
       '-66.',
     ];
 
-    for (let testValue of testValues) {
+    for (const testValue of testValues) {
       const bdTestValue = big.toBigDecimal(testValue.replace(/_/g, ''));
       const parsedValue = JSONZ.parse(testValue + 'm');
 

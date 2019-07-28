@@ -218,7 +218,7 @@ describe('JSONZ', () => {
           '0b_11', '0b1__1', '0b11_',
         ];
 
-        for (let badNumber of badNumbers) {
+        for (const badNumber of badNumbers) {
           assert.throws(() => {
             JSONZ.parse(badNumber);
           },

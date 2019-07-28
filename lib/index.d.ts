@@ -11,16 +11,31 @@ export enum Quote {
 }
 
 export interface JsonZOptions {
-  expandedPrimitives: boolean,
-  quote: '"' | "'" | Quote;
-  quoteAllKeys: boolean;
-  replacer: JsonZReplacer | JsonZAllowedKeys;
-  space: string | number | String | Number;
-  sparseArrays: boolean;
-  trailingComma: boolean;
+  classPrefix?: string;
+  expandedNumbers?: boolean;
+  expandedPrimitives?: boolean,
+  expandedValues?: boolean,
+  quote?: '"' | "'" | Quote;
+  quoteAllKeys?: boolean;
+  replacer?: JsonZReplacer | JsonZAllowedKeys;
+  space?: string | number | String | Number;
+  sparseArrays?: boolean;
+  trailingComma?: boolean;
 }
 
-export function parse(text: string, reviver?: JsonZReviver): any;
+export interface JsonZClassHandler {
+  test: (instance: any, expandedNumbers?: boolean) => boolean;
+  name: string;
+  creator: (text: string) => any;
+  serializer: (instance: any) => string;
+}
+
+export interface JsonZParseOptions {
+  keySuffixClasses?: boolean;
+}
+
+export function parse(text: string, options?: JsonZParseOptions): any;
+export function parse(text: string, reviver?: JsonZReviver, options?: JsonZParseOptions): any;
 
 export function stringify(value: any, replacer?: JsonZReplacer | JsonZAllowedKeys,
                           space?: string | number | String | Number): string;
@@ -30,6 +45,10 @@ export function stringify(value: any, options?: JsonZOptions,
 export function setOptions(options: JsonZOptions): void;
 
 export function resetOptions(): void;
+
+export function setParseOptions(options: JsonZParseOptions): void;
+
+export function resetParseOptions(): void;
 
 export const DELETE: Symbol;
 
