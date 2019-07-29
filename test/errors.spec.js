@@ -224,7 +224,7 @@ describe('JSONZ', () => {
           },
           err => (
             err instanceof SyntaxError &&
-                          /^JSON-Z: invalid character '_'/.test(err.message)
+                          /^JSON-Z: invalid (character '_'|extended value type)/.test(err.message)
           ));
         }
       });
@@ -248,6 +248,83 @@ describe('JSONZ', () => {
                             /^JSON-Z: "123e-1n" contains invalid exponent/.test(err.message) &&
                             err.lineNumber === 1 &&
                             err.columnNumber === 1;
+        });
+      });
+
+      it('throws on unknown expanded value types', () => {
+        assert.throws(() => {
+          JSONZ.parse('_foo("bar")');
+        },
+        err => {
+          return err instanceof SyntaxError &&
+                            /^JSON-Z: unknown extended value type/.test(err.message) &&
+                            err.lineNumber === 1;
+        });
+      });
+
+      it('throws on invalid expanded value types', () => {
+        assert.throws(() => {
+          JSONZ.parse('_("bar")');
+        },
+        err => {
+          return err instanceof SyntaxError &&
+                            /^JSON-Z: invalid extended value type/.test(err.message) &&
+                            err.lineNumber === 1;
+        });
+        assert.throws(() => {
+          JSONZ.parse('_7oo("bar")');
+        },
+        err => {
+          return err instanceof SyntaxError &&
+                            /^JSON-Z: invalid extended value type/.test(err.message) &&
+                            err.lineNumber === 1;
+        });
+      });
+
+      it('throws on invalid expanded value syntax', () => {
+        assert.throws(() => {
+          JSONZ.parse('_date["bar")');
+        },
+        err => {
+          return err instanceof SyntaxError &&
+                            /^JSON-Z: invalid character/.test(err.message) &&
+                            err.lineNumber === 1;
+        });
+
+        assert.throws(() => {
+          JSONZ.parse('_date');
+        },
+        err => {
+          return err instanceof SyntaxError &&
+                            /^JSON-Z: invalid end of input/.test(err.message) &&
+                            err.lineNumber === 1;
+        });
+
+        assert.throws(() => {
+          JSONZ.parse('_date(');
+        },
+        err => {
+          return err instanceof SyntaxError &&
+                            /^JSON-Z: invalid end of input/.test(err.message) &&
+                            err.lineNumber === 1;
+        });
+
+        assert.throws(() => {
+          JSONZ.parse('_date("bar"{');
+        },
+        err => {
+          return err instanceof SyntaxError &&
+                            /^JSON-Z: invalid character/.test(err.message) &&
+                            err.lineNumber === 1;
+        });
+
+        assert.throws(() => {
+          JSONZ.parse('_date("bar"');
+        },
+        err => {
+          return err instanceof SyntaxError &&
+                            /^JSON-Z: invalid end of input/.test(err.message) &&
+                            err.lineNumber === 1;
         });
       });
 

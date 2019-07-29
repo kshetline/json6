@@ -189,6 +189,11 @@ describe('JSONZ', () => {
         it('stringifies bigdecimal special values', () => {
           assert.strictEqual(JSONZ.stringify([big.toBigDecimal(1 / 0), big.toBigDecimal(-1 / 0), big.toBigDecimal(0 / 0)]),
             '[Infinity,-Infinity,NaN]');
+
+          assert.strictEqual(JSONZ.stringify(
+            big.toBigDecimal(1 / 0),
+            {expandedNumbers: false, expandedPrimitives: true, expandedValues: false, quote: JSONZ.Quote.PREFER_DOUBLE}),
+          'Infinity');
         });
 
         it('stringifies distinct bigdecimal negative zero', () => {

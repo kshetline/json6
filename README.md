@@ -24,6 +24,7 @@ The following features, which are not supported in standard JSON, have been adde
 
 ### Objects
 - Object keys may be an unquoted ECMAScript 5.1 _[IdentifierName]_.
+- Unquoted object keys may still include character escapes.
 - Object keys may be single quoted or backtick quoted.
 - Objects may have a single trailing comma.
 
@@ -34,7 +35,6 @@ The following features, which are not supported in standard JSON, have been adde
 ### Strings
 - Strings may be single quoted or backtick quoted (using backticks does not, however, invoke string interpolation).
 - Strings may span multiple lines by escaping new line characters.
-- Strings may include character escapes.
 
 ### Numbers
 - Numbers may be hexadecimal, octal, or binary.

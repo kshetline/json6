@@ -8,28 +8,7 @@ const Decimal = require('decimal.js');
 JSONZ.setBigInt(bigInt);
 JSONZ.setBigDecimal(Decimal);
 
-function equalBigInt(a, b) {
-  if (a === b) {
-    return true;
-  }
-  else if (!!a !== !!b || !a) {
-    return false;
-  }
-  else if (typeof a.equals === 'function') {
-    return a.equals(b);
-  }
-  else if (typeof a.compare === 'function') {
-    return a.compare(b) === 0;
-  }
-  else if (typeof a.comparedTo === 'function') {
-    return a.comparedTo(b) === 0;
-  }
-  else {
-    return undefined;
-  }
-}
-
-function equalBigDecimal(a, b) {
+function equalBigNumber(a, b) {
   if (a === b) {
     return true;
   }
@@ -277,7 +256,7 @@ t.test('parse(text)', t => {
     }
 
     for (let i = 0; i < a.length; ++i) {
-      if (!equalBigInt(a[i], b[i])) {
+      if (!equalBigNumber(a[i], b[i])) {
         return false;
       }
     }
@@ -298,12 +277,12 @@ t.test('parse(text)', t => {
     JSONZ.setBigInt(bigInt);
 
     t.ok(
-      equalBigInt(JSONZ.parse(testDigits + 'n'), big.toBigInt(testDigits)),
+      equalBigNumber(JSONZ.parse(testDigits + 'n'), big.toBigInt(testDigits)),
       big.hasBigInt() ? 'parses bigint' : 'parses best approximation of bigint'
     );
 
     t.ok(
-      equalBigInt(JSONZ.parse('33n'), big.toBigInt('33')),
+      equalBigNumber(JSONZ.parse('33n'), big.toBigInt('33')),
       'parses bigint'
     );
 
@@ -339,7 +318,7 @@ t.test('parse(text)', t => {
       const parsedValue = JSONZ.parse(testValue + 'm');
 
       t.ok(
-        equalBigDecimal(bdTestValue, parsedValue),
+        equalBigNumber(bdTestValue, parsedValue),
         big.hasBigDecimal() ? 'parses bigdecimal' : 'parses best approximation of bigdecimal'
       );
     }
@@ -347,6 +326,55 @@ t.test('parse(text)', t => {
     JSONZ.setBigDecimal(null);
     t.ok(big.getBigDecimalType() === 'numeric', 'can disable big decimal support');
     JSONZ.setBigDecimal(Decimal);
+
+    t.end();
+  });
+
+  t.test('functional values', t => {
+    const dateStr = '2019-07-28T08:49:58.202Z';
+    const date = new Date(dateStr);
+
+    t.strictSame(
+      JSONZ.parse(`_date('${dateStr}')`).getTime(),
+      date.getTime(),
+      'parses date as extended value at root'
+    );
+
+    t.ok(
+      isNaN(JSONZ.parse(`_date()`, {}).getTime()),
+      'parses date without argument'
+    );
+
+    t.strictSame(
+      JSONZ.parse(`[1,2,_date('${dateStr}'),4]`)[2].getTime(),
+      date.getTime(),
+      'parses date as extended value at in array'
+    );
+
+    t.strictSame(
+      JSONZ.parse(`{a:1,b:2,c:_date('${dateStr}'),d:4}`)['c'].getTime(),
+      date.getTime(),
+      'parses date as extended value at in object'
+    );
+
+    t.strictSame(
+      JSONZ.parse(`_$y310_date   // comment
+      ( /* another comment */'${dateStr}'  )  `).getTime(),
+      date.getTime(),
+      'parses extended values with arbitrary prefixes, embedded whitespace, and comments'
+    );
+
+    t.strictSame(
+      JSONZ.parse("_bigint('-123')").toString(),
+      '-123',
+      'parses bigint as extended value'
+    );
+
+    t.strictSame(
+      JSONZ.parse("_bigdecimal('3.14')").toString(),
+      '3.14',
+      'parses bigdecimal as extended value'
+    );
 
     t.end();
   });

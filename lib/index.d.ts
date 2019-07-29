@@ -26,7 +26,7 @@ export interface JsonZOptions {
 export interface JsonZClassHandler {
   test: (instance: any, expandedNumbers?: boolean) => boolean;
   name: string;
-  creator: (text: string) => any;
+  creator: (value: any) => any;
   serializer: (instance: any) => string;
 }
 
