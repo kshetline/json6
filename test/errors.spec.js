@@ -251,7 +251,7 @@ describe('JSONZ', () => {
         });
       });
 
-      it('throws on unknown expanded value types', () => {
+      it('throws on unknown extended value types', () => {
         assert.throws(() => {
           JSONZ.parse('_foo("bar")');
         },
@@ -262,7 +262,7 @@ describe('JSONZ', () => {
         });
       });
 
-      it('throws on invalid expanded value types', () => {
+      it('throws on invalid extended value types', () => {
         assert.throws(() => {
           JSONZ.parse('_("bar")');
         },
@@ -281,7 +281,7 @@ describe('JSONZ', () => {
         });
       });
 
-      it('throws on invalid expanded value syntax', () => {
+      it('throws on invalid extended value syntax', () => {
         assert.throws(() => {
           JSONZ.parse('_date["bar")');
         },
