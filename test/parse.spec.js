@@ -2,6 +2,7 @@ const assert = require('assert');
 const sinon = require('sinon');
 const JSONZ = require('../lib');
 const big = require('../lib/bignumber-util');
+const util = require('../lib/util');
 const bigInt = require('big-integer');
 const Decimal = require('decimal.js');
 
@@ -374,6 +375,17 @@ t.test('parse(text)', t => {
       JSONZ.parse("_bigdecimal('3.14')").toString(),
       '3.14',
       'parses bigdecimal as extended type'
+    );
+
+    t.strictSame(
+      JSONZ.parse('_foo("bar")'),
+      {_$_: 'foo', _$_value: 'bar'},
+      'falls back on using a type container for unknown extended type'
+    );
+
+    t.ok(
+      !util.isTypeContainer(5) && !util.isTypeContainer({_$_: 'foo'}) && !util.isTypeContainer({_$_value: 'foo'}) && !util.isTypeContainer({_$_: 'foo', _$_value: 'bar', baz: 0}),
+      'is strict about recognizing type containers'
     );
 
     t.end();

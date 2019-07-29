@@ -8,8 +8,8 @@ const Decimal = require('decimal.js');
 JSONZ.setBigInt(bigInt);
 JSONZ.setBigDecimal(Decimal);
 JSONZ.setOptions({
-  expandedPrimitives: true,
-  expandedTypes: true,
+  extendedPrimitives: true,
+  extendedTypes: JSONZ.ExtendedTypeMode.AS_FUNCTIONS,
   primitiveBigDecimal: true,
   primitiveBigInt: true,
   quote: JSONZ.Quote.PREFER_SINGLE,
@@ -95,7 +95,7 @@ describe('JSONZ', () => {
       it('stringifies sparse arrays with null for JSON compatibility', () => {
         // noinspection JSConsecutiveCommasInArrayLiteral
         assert.strictEqual(JSONZ.stringify([1,, 2], // eslint-disable-line no-sparse-arrays
-          {expandedPrimitives: false, sparseArrays: false}), '[1,null,2]');
+          {extendedPrimitives: false, sparseArrays: false}), '[1,null,2]');
       });
     });
 
@@ -167,15 +167,22 @@ describe('JSONZ', () => {
         it('stringifies bigint values for standard JSON', () => {
           assert.strictEqual(JSONZ.stringify(
             big.toBigInt('4081516234268675309'),
-            {primitiveBigInt: false, expandedTypes: false, quote: JSONZ.Quote.PREFER_DOUBLE}),
+            {primitiveBigInt: false, extendedTypes: JSONZ.ExtendedTypeMode.OFF, quote: JSONZ.Quote.PREFER_DOUBLE}),
           '"4081516234268675309"');
         });
 
         it('stringifies bigint values as function values', () => {
           assert.strictEqual(JSONZ.stringify(
             big.toBigInt('4081516234268675309'),
-            {primitiveBigInt: false, expandedTypes: true}),
+            {primitiveBigInt: false, extendedTypes: JSONZ.ExtendedTypeMode.AS_FUNCTIONS}),
           "_bigint('4081516234268675309')");
+        });
+
+        it('stringifies bigint values as type containers', () => {
+          assert.strictEqual(JSONZ.stringify(
+            big.toBigInt('4081516234268675309'),
+            {primitiveBigInt: false, extendedTypes: JSONZ.ExtendedTypeMode.AS_OBJECTS}),
+          "{_$_:'bigint',_$_value:'4081516234268675309'}");
         });
       });
     }
@@ -193,7 +200,7 @@ describe('JSONZ', () => {
 
           assert.strictEqual(JSONZ.stringify(
             big.toBigDecimal(1 / 0),
-            {primitiveBigDecimal: false, expandedPrimitives: true, expandedTypes: false, quote: JSONZ.Quote.PREFER_DOUBLE}),
+            {primitiveBigDecimal: false, extendedPrimitives: true, extendedTypes: JSONZ.ExtendedTypeMode.OFF, quote: JSONZ.Quote.PREFER_DOUBLE}),
           'Infinity');
         });
 
@@ -204,21 +211,28 @@ describe('JSONZ', () => {
         it('stringifies bigdecimal values for standard JSON', () => {
           assert.strictEqual(JSONZ.stringify(
             [big.toBigDecimal(1 / 0), big.toBigDecimal(-1 / 0), big.toBigDecimal(0 / 0), big.toBigDecimal('3.14')],
-            {primitiveBigDecimal: false, expandedPrimitives: false, expandedTypes: false, quote: JSONZ.Quote.PREFER_DOUBLE}),
+            {primitiveBigDecimal: false, extendedPrimitives: false, extendedTypes: JSONZ.ExtendedTypeMode.OFF, quote: JSONZ.Quote.PREFER_DOUBLE}),
           '[null,null,null,"3.14"]');
         });
 
         it('stringifies bigdecimal values as function values', () => {
           assert.strictEqual(JSONZ.stringify(
             big.toBigDecimal('2.718281828459045'),
-            {primitiveBigDecimal: false, expandedTypes: true}),
+            {primitiveBigDecimal: false, extendedTypes: JSONZ.ExtendedTypeMode.AS_FUNCTIONS}),
           "_bigdecimal('2.718281828459045')");
+        });
+
+        it('stringifies bigdecimal values as type containers', () => {
+          assert.strictEqual(JSONZ.stringify(
+            big.toBigDecimal('2.718281828459045'),
+            {primitiveBigDecimal: false, extendedTypes: JSONZ.ExtendedTypeMode.AS_OBJECTS}),
+          "{_$_:'bigdecimal',_$_value:'2.718281828459045'}");
         });
       });
     }
 
-    describe('expanded values', () => {
-      it('stringifies Date objects as expanded values', () => {
+    describe('extended type', () => {
+      it('stringifies Date objects as extended types', () => {
         assert.strictEqual(JSONZ.stringify(new Date(Date.UTC(2019, 6, 28, 8, 49, 58, 202))),
           "_date('2019-07-28T08:49:58.202Z')");
       });
@@ -265,14 +279,14 @@ describe('JSONZ', () => {
     });
 
     it('stringifies using built-in toJSON methods', () => {
-      assert.strictEqual(JSONZ.stringify(new Date('2016-01-01T00:00:00.000Z'), {expandedTypes: false}),
+      assert.strictEqual(JSONZ.stringify(new Date('2016-01-01T00:00:00.000Z'), {extendedTypes: JSONZ.ExtendedTypeMode.OFF}),
         "'2016-01-01T00:00:00.000Z'");
     });
 
     it('stringifies using user defined toJSON methods', () => {
       function C() {}
       Object.assign(C.prototype, {toJSON() { return {a: 1, b: 2}; }});
-      assert.strictEqual(JSONZ.stringify(new C(), {expandedTypes: false}), '{a:1,b:2}');
+      assert.strictEqual(JSONZ.stringify(new C(), {extendedTypes: JSONZ.ExtendedTypeMode.OFF}), '{a:1,b:2}');
     });
 
     it('stringifies using user defined toJSONZ methods, with toJSONZ having priority over toJSON', () => {

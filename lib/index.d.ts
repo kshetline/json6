@@ -16,9 +16,15 @@ export enum OptionSet {
   THE_WORKS = 2
 }
 
+export enum ExtendedTypeMode {
+  OFF,
+  AS_FUNCTIONS,
+  AS_OBJECTS
+}
+
 export interface JsonZOptions {
-  expandedPrimitives?: boolean,
-  expandedTypes?: boolean,
+  extendedPrimitives?: boolean,
+  extendedTypes?: ExtendedTypeMode,
   primitiveBigDecimal?: boolean;
   primitiveBigInt?: boolean;
   quote?: '"' | "'" | Quote;

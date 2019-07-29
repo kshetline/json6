@@ -251,17 +251,6 @@ describe('JSONZ', () => {
         });
       });
 
-      it('throws on unknown extended value types', () => {
-        assert.throws(() => {
-          JSONZ.parse('_foo("bar")');
-        },
-        err => {
-          return err instanceof SyntaxError &&
-                            /^JSON-Z: unknown extended type/.test(err.message) &&
-                            err.lineNumber === 1;
-        });
-      });
-
       it('throws on invalid extended value types', () => {
         assert.throws(() => {
           JSONZ.parse('_("bar")');
