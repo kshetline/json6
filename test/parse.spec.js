@@ -330,14 +330,14 @@ t.test('parse(text)', t => {
     t.end();
   });
 
-  t.test('functional values', t => {
+  t.test('extended types', t => {
     const dateStr = '2019-07-28T08:49:58.202Z';
     const date = new Date(dateStr);
 
     t.strictSame(
       JSONZ.parse(`_date('${dateStr}')`).getTime(),
       date.getTime(),
-      'parses date as extended value at root'
+      'parses date as extended type at root'
     );
 
     t.ok(
@@ -348,32 +348,32 @@ t.test('parse(text)', t => {
     t.strictSame(
       JSONZ.parse(`[1,2,_date('${dateStr}'),4]`)[2].getTime(),
       date.getTime(),
-      'parses date as extended value at in array'
+      'parses date as extended type at in array'
     );
 
     t.strictSame(
       JSONZ.parse(`{a:1,b:2,c:_date('${dateStr}'),d:4}`)['c'].getTime(),
       date.getTime(),
-      'parses date as extended value at in object'
+      'parses date as extended type at in object'
     );
 
     t.strictSame(
       JSONZ.parse(`_$y310_date   // comment
       ( /* another comment */'${dateStr}'  )  `).getTime(),
       date.getTime(),
-      'parses extended values with arbitrary prefixes, embedded whitespace, and comments'
+      'parses extended types with arbitrary prefixes, embedded whitespace, and comments'
     );
 
     t.strictSame(
       JSONZ.parse("_bigint('-123')").toString(),
       '-123',
-      'parses bigint as extended value'
+      'parses bigint as extended type'
     );
 
     t.strictSame(
       JSONZ.parse("_bigdecimal('3.14')").toString(),
       '3.14',
-      'parses bigdecimal as extended value'
+      'parses bigdecimal as extended type'
     );
 
     t.end();

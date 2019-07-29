@@ -31,8 +31,10 @@
   },
   "keywords": [
     "bigint",
+    "big decimal",
     "ecmascript",
     "es5",
+    "es6",
     "es2015",
     "json",
     "json5",

@@ -224,7 +224,7 @@ describe('JSONZ', () => {
           },
           err => (
             err instanceof SyntaxError &&
-                          /^JSON-Z: invalid (character '_'|extended value type)/.test(err.message)
+                          /^JSON-Z: invalid (character '_'|extended type)/.test(err.message)
           ));
         }
       });
@@ -257,7 +257,7 @@ describe('JSONZ', () => {
         },
         err => {
           return err instanceof SyntaxError &&
-                            /^JSON-Z: unknown extended value type/.test(err.message) &&
+                            /^JSON-Z: unknown extended type/.test(err.message) &&
                             err.lineNumber === 1;
         });
       });
@@ -268,7 +268,7 @@ describe('JSONZ', () => {
         },
         err => {
           return err instanceof SyntaxError &&
-                            /^JSON-Z: invalid extended value type/.test(err.message) &&
+                            /^JSON-Z: invalid extended type/.test(err.message) &&
                             err.lineNumber === 1;
         });
         assert.throws(() => {
@@ -276,7 +276,7 @@ describe('JSONZ', () => {
         },
         err => {
           return err instanceof SyntaxError &&
-                            /^JSON-Z: invalid extended value type/.test(err.message) &&
+                            /^JSON-Z: invalid extended type/.test(err.message) &&
                             err.lineNumber === 1;
         });
       });

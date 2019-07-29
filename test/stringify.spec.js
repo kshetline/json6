@@ -8,9 +8,10 @@ const Decimal = require('decimal.js');
 JSONZ.setBigInt(bigInt);
 JSONZ.setBigDecimal(Decimal);
 JSONZ.setOptions({
-  expandedNumbers: true,
   expandedPrimitives: true,
-  expandedValues: true,
+  expandedTypes: true,
+  primitiveBigDecimal: true,
+  primitiveBigInt: true,
   quote: JSONZ.Quote.PREFER_SINGLE,
   quoteAllKeys: false,
   sparseArrays: true,
@@ -51,7 +52,7 @@ describe('JSONZ', () => {
       });
 
       it('stringifies escaped property names', () => {
-        assert.strictEqual(JSONZ.stringify({'\\\b\f\n\r\t\v\0\x01': 1}), "{'\\\\\\b\\f\\n\\r\\t\\v\\0\\x01':1}");
+        assert.strictEqual(JSONZ.stringify({'\\\b\f\n\r\t\v\0\x01': 1}), "{'\\\\\\b\\f\\n\\r\\t\\v\\0\\u0001':1}");
       });
 
       it('stringifies multiple properties', () => {
@@ -166,14 +167,14 @@ describe('JSONZ', () => {
         it('stringifies bigint values for standard JSON', () => {
           assert.strictEqual(JSONZ.stringify(
             big.toBigInt('4081516234268675309'),
-            {expandedNumbers: false, expandedValues: false, quote: JSONZ.Quote.PREFER_DOUBLE}),
+            {primitiveBigInt: false, expandedTypes: false, quote: JSONZ.Quote.PREFER_DOUBLE}),
           '"4081516234268675309"');
         });
 
         it('stringifies bigint values as function values', () => {
           assert.strictEqual(JSONZ.stringify(
             big.toBigInt('4081516234268675309'),
-            {expandedNumbers: false, expandedValues: true}),
+            {primitiveBigInt: false, expandedTypes: true}),
           "_bigint('4081516234268675309')");
         });
       });
@@ -192,7 +193,7 @@ describe('JSONZ', () => {
 
           assert.strictEqual(JSONZ.stringify(
             big.toBigDecimal(1 / 0),
-            {expandedNumbers: false, expandedPrimitives: true, expandedValues: false, quote: JSONZ.Quote.PREFER_DOUBLE}),
+            {primitiveBigDecimal: false, expandedPrimitives: true, expandedTypes: false, quote: JSONZ.Quote.PREFER_DOUBLE}),
           'Infinity');
         });
 
@@ -203,14 +204,14 @@ describe('JSONZ', () => {
         it('stringifies bigdecimal values for standard JSON', () => {
           assert.strictEqual(JSONZ.stringify(
             [big.toBigDecimal(1 / 0), big.toBigDecimal(-1 / 0), big.toBigDecimal(0 / 0), big.toBigDecimal('3.14')],
-            {expandedNumbers: false, expandedPrimitives: false, expandedValues: false, quote: JSONZ.Quote.PREFER_DOUBLE}),
+            {primitiveBigDecimal: false, expandedPrimitives: false, expandedTypes: false, quote: JSONZ.Quote.PREFER_DOUBLE}),
           '[null,null,null,"3.14"]');
         });
 
         it('stringifies bigdecimal values as function values', () => {
           assert.strictEqual(JSONZ.stringify(
             big.toBigDecimal('2.718281828459045'),
-            {expandedNumbers: false, expandedValues: true}),
+            {primitiveBigDecimal: false, expandedTypes: true}),
           "_bigdecimal('2.718281828459045')");
         });
       });
@@ -233,7 +234,7 @@ describe('JSONZ', () => {
       });
 
       it('stringifies escaped characters', () => {
-        assert.strictEqual(JSONZ.stringify('\\\b\f\n\r\t\v\0\x0f'), "'\\\\\\b\\f\\n\\r\\t\\v\\0\\x0F'");
+        assert.strictEqual(JSONZ.stringify('\\\b\f\n\r\t\v\0\x0f'), "'\\\\\\b\\f\\n\\r\\t\\v\\0\\u000F'");
       });
 
       it('stringifies with backtick quoting', () => {
@@ -264,14 +265,14 @@ describe('JSONZ', () => {
     });
 
     it('stringifies using built-in toJSON methods', () => {
-      assert.strictEqual(JSONZ.stringify(new Date('2016-01-01T00:00:00.000Z'), {expandedValues: false}),
+      assert.strictEqual(JSONZ.stringify(new Date('2016-01-01T00:00:00.000Z'), {expandedTypes: false}),
         "'2016-01-01T00:00:00.000Z'");
     });
 
     it('stringifies using user defined toJSON methods', () => {
       function C() {}
       Object.assign(C.prototype, {toJSON() { return {a: 1, b: 2}; }});
-      assert.strictEqual(JSONZ.stringify(new C(), {expandedValues: false}), '{a:1,b:2}');
+      assert.strictEqual(JSONZ.stringify(new C(), {expandedTypes: false}), '{a:1,b:2}');
     });
 
     it('stringifies using user defined toJSONZ methods, with toJSONZ having priority over toJSON', () => {

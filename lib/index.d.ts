@@ -11,27 +11,28 @@ export enum Quote {
 }
 
 export interface JsonZOptions {
-  classPrefix?: string;
-  expandedNumbers?: boolean;
   expandedPrimitives?: boolean,
-  expandedValues?: boolean,
+  expandedTypes?: boolean,
+  primitiveBigDecimal?: boolean;
+  primitiveBigInt?: boolean;
   quote?: '"' | "'" | Quote;
   quoteAllKeys?: boolean;
   replacer?: JsonZReplacer | JsonZAllowedKeys;
   space?: string | number | String | Number;
   sparseArrays?: boolean;
   trailingComma?: boolean;
+  typePrefix?: string;
 }
 
-export interface JsonZClassHandler {
-  test: (instance: any, expandedNumbers?: boolean) => boolean;
+export interface JsonZTypeHandler {
+  test: (instance: any, options?: JsonZOptions) => boolean;
   name: string;
   creator: (value: any) => any;
   serializer: (instance: any) => string;
 }
 
 export interface JsonZParseOptions {
-  keySuffixClasses?: boolean;
+  reviveTypedContainers?: boolean;
 }
 
 export function parse(text: string, options?: JsonZParseOptions): any;

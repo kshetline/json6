@@ -25,6 +25,7 @@ The following features, which are not supported in standard JSON, have been adde
 ### Objects
 - Object keys may be an unquoted ECMAScript 5.1 _[IdentifierName]_.
 - Unquoted object keys may still include character escapes.
+- Character escapes with two hex digits (`\xXX`) are supported for parsing, as well as the four digit `\uXXXX` form.
 - Object keys may be single quoted or backtick quoted.
 - Objects may have a single trailing comma.
 
@@ -35,6 +36,7 @@ The following features, which are not supported in standard JSON, have been adde
 ### Strings
 - Strings may be single quoted or backtick quoted (using backticks does not, however, invoke string interpolation).
 - Strings may span multiple lines by escaping new line characters.
+- Character escapes with two hex digits (`\xXX`) are supported for parsing, as well as the four digit `\uXXXX` form.
 
 ### Numbers
 - Numbers may be hexadecimal, octal, or binary.
@@ -145,7 +147,9 @@ Converts a JavaScript value to a JSON-Z string, optionally replacing values if a
   When using the standard `JSON.stringify()`, a replacer function is called with two arguments: `key` and `value`. JSON-Z adds a third argument, `holder`. This value is already available to standard `function`s as `this`, but `this` won't be bound to `holder` when using an anonymous (arrow) function as a replacer, so the third argument (which can be ignored if not needed) provides alternative access to the `holder` value.
 - `space`: A string or number that is used to insert white space into the output JSON-Z string for readability purposes. If this is a number, it indicates the number of space characters to use as white space; this number is capped at 10. Values less than 1 indicate that no space should be used. If this is a string, the string (or the first 10 characters of the string, if it's longer than that) is used as white space. A single space adds white space without adding indentation. If this parameter is not provided (or is null), no white space is used. If indenting white space is used, trailing commas can optionally appear in objects and arrays.
 - `options`: An object with the following properties:
-  - `expandedPrimitives`: If `true` (the default is `false`) this enables direct stringification of `Infinity`, `-Infinity`, `NaN`, big integers using the '`n`' suffix, and big decimals using the '`m`' suffix. Otherwise `Infinity`, `-Infinity`, and `NaN` become `null`, and big integers and big decimals are quoted. (Note: The '`m`' suffix can't be parsed as current valid JavaScript, but it is potentially a future valid standard notation.)
+  - `expandedPrimitives`: If `true` (the default is `false`) this enables direct stringification of `Infinity`, `-Infinity`, and `NaN`. Otherwise these values become `null`.
+  - `primitiveBigDecimal`: If `true` (the default is `false`) this enables direct stringification of big decimals using the '`m`' suffix. Otherwise big decimals are provided as quoted strings. (Note: The '`m`' suffix can't be parsed as current valid JavaScript, but it is potentially a future valid standard notation.)
+  - `primitiveBigInt`: If `true` (the default is `false`) this enables direct stringification of big integers using the '`n`' suffix. Otherwise big integers are provided as quoted strings.
   - `quote`: A string representing the quote character to use when serializing strings (single quote `'` or double quote `"`), or one of the following values:
     - `JSONZ.Quote.DOUBLE`: Always quote with double quotes (this is the default).
     - `JSONZ.Quote.SINGLE`: Always quote with single quotes.
