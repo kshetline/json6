@@ -523,5 +523,71 @@ describe('JSONZ', () => {
       JSONZ.setOptions({quote: JSONZ.Quote.PREFER_DOUBLE});
       assert.strictEqual(JSONZ.stringify({a: 1, b: [1, 2]}), '{\n  "a": 1,\n  "b": [\n    1,\n    2,\n  ],\n}');
     });
+
+    it('option sets work', () => {
+      const bi = big.toBigInt(1);
+      const bd = big.toBigDecimal(1);
+
+      JSONZ.setOptions(JSONZ.OptionSet.MAX_COMPATIBILITY);
+      assert.strictEqual(JSONZ.stringify({a: 1, b: NaN, c: bi, d: bd}), '{"a":1,"b":null,"c":"1","d":"1"}');
+
+      JSONZ.setOptions(JSONZ.OptionSet.RELAXED);
+      assert.strictEqual(JSONZ.stringify({a: 1, b: NaN, c: bi, d: bd}), "{a:1,b:NaN,c:1n,d:'1'}");
+
+      JSONZ.setOptions(JSONZ.OptionSet.THE_WORKS);
+      assert.strictEqual(JSONZ.stringify({a: 1, b: NaN, c: bi, d: bd}), '{a:1,b:NaN,c:1n,d:1m}');
+
+      JSONZ.setOptions(JSONZ.OptionSet.THE_WORKS, {space: 1});
+      assert.strictEqual(JSONZ.stringify({a: 1, b: NaN, c: bi, d: bd}), '{a: 1, b: NaN, c: 1n, d: 1m}');
+    });
+  });
+
+  describe('type handlers', () => {
+    function Half(n) {
+      this.value = n / 2;
+    }
+
+    function Double(n) {
+      this.value = n * 2;
+    }
+
+    JSONZ.setOptions({space: 0});
+
+    JSONZ.addTypeHandler({
+      name: 'half',
+      test: obj => obj instanceof Half,
+      creator: value => new Half(value),
+      serializer: instance => (instance.value * 2),
+    });
+
+    JSONZ.addTypeHandler({
+      name: 'double',
+      test: obj => obj instanceof Double,
+      creator: value => new Double(value),
+      serializer: instance => (instance.value / 2),
+    });
+
+    assert.strictEqual(
+      JSONZ.stringify([new Half(6), new Double(7)]),
+      '[_half(6),_double(7)]'
+    );
+
+    JSONZ.removeTypeHandler('half');
+
+    assert.strictEqual(
+      JSONZ.stringify([new Half(6), new Double(7)]),
+      '[{value:3},_double(7)]'
+    );
+
+    const dateStr = '2019-07-28T08:49:58.202Z';
+    const date = new Date(dateStr);
+
+    JSONZ.removeTypeHandler('date');
+    JSONZ.removeTypeHandler('notThere');
+    assert.strictEqual(JSONZ.stringify(date), "'2019-07-28T08:49:58.202Z'");
+    JSONZ.restoreStandardTypeHandlers();
+    assert.strictEqual(JSONZ.stringify([date, new Double(2)]), "[_date('2019-07-28T08:49:58.202Z'),_double(2)]");
+    JSONZ.resetStandardTypeHandlers();
+    assert.strictEqual(JSONZ.stringify([date, new Double(2)]), "[_date('2019-07-28T08:49:58.202Z'),{value:4}]");
   });
 });

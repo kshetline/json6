@@ -55,7 +55,6 @@
   "homepage": "https://github.com/kshetline/json-z",
   "nyc": {
     "exclude": [
-      "lib/options-manager.js",
       "lib/platform-specifics.js",
       "test"
     ]

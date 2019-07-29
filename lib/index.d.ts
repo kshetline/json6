@@ -10,6 +10,12 @@ export enum Quote {
   PREFER_SINGLE
 }
 
+export enum OptionSet {
+  MAX_COMPATIBILITY = 0,
+  RELAXED = 1,
+  THE_WORKS = 2
+}
+
 export interface JsonZOptions {
   expandedPrimitives?: boolean,
   expandedTypes?: boolean,
@@ -25,10 +31,10 @@ export interface JsonZOptions {
 }
 
 export interface JsonZTypeHandler {
-  test: (instance: any, options?: JsonZOptions) => boolean;
   name: string;
+  test: (instance: any, options?: JsonZOptions) => boolean;
   creator: (value: any) => any;
-  serializer: (instance: any) => string;
+  serializer: (instance: any, options?: JsonZOptions) => any;
 }
 
 export interface JsonZParseOptions {
@@ -43,13 +49,17 @@ export function stringify(value: any, replacer?: JsonZReplacer | JsonZAllowedKey
 export function stringify(value: any, options?: JsonZOptions,
                           space?: string | number | String | Number): string;
 
-export function setOptions(options: JsonZOptions): void;
-
+export function setOptions(options: JsonZOptions | OptionSet, extraOptions?: JsonZOptions): void;
 export function resetOptions(): void;
 
-export function setParseOptions(options: JsonZParseOptions): void;
+// export function setParseOptions(options: JsonZParseOptions): void;
 
-export function resetParseOptions(): void;
+// export function resetParseOptions(): void;
+
+export function addTypeHandler(handler: JsonZTypeHandler): void;
+export function removeTypeHandler(typeName: string): void;
+export function resetStandardTypeHandlers(): void;
+export function restoreStandardTypeHandlers(): void;
 
 export const DELETE: Symbol;
 
