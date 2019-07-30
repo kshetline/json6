@@ -1,4 +1,4 @@
-export type JsonZReviver = (key: string, value: any) => any;
+export type JsonZReviver = (key: string, value: any, holder?: any) => any;
 
 export type JsonZReplacer = (holder: any, key: string, value: any) => any;
 export type JsonZAllowedKeys = (string | number)[];
@@ -45,6 +45,7 @@ export interface JsonZTypeHandler {
 
 export interface JsonZParseOptions {
   reviveTypedContainers?: boolean;
+  reviver?: JsonZReviver;
 }
 
 export function parse(text: string, options?: JsonZParseOptions): any;
@@ -58,9 +59,9 @@ export function stringify(value: any, options?: JsonZOptions,
 export function setOptions(options: JsonZOptions | OptionSet, extraOptions?: JsonZOptions): void;
 export function resetOptions(): void;
 
-// export function setParseOptions(options: JsonZParseOptions): void;
+export function setParseOptions(options: JsonZParseOptions): void;
 
-// export function resetParseOptions(): void;
+export function resetParseOptions(): void;
 
 export function addTypeHandler(handler: JsonZTypeHandler): void;
 export function removeTypeHandler(typeName: string): void;

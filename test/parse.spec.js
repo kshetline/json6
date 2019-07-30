@@ -8,6 +8,9 @@ const Decimal = require('decimal.js');
 
 JSONZ.setBigInt(bigInt);
 JSONZ.setBigDecimal(Decimal);
+JSONZ.setParseOptions({
+  reviveTypedContainers: true,
+});
 
 function equalBigNumber(a, b) {
   if (a === b) {
@@ -341,6 +344,12 @@ t.test('parse(text)', t => {
       'parses date as extended type at root'
     );
 
+    t.strictSame(
+      JSONZ.parse(`{_$_:'date',_$_value:'${dateStr}'}`).getTime(),
+      date.getTime(),
+      'parses date as from type container at root'
+    );
+
     t.ok(
       isNaN(JSONZ.parse(`_date()`, {}).getTime()),
       'parses date without argument'
@@ -349,13 +358,25 @@ t.test('parse(text)', t => {
     t.strictSame(
       JSONZ.parse(`[1,2,_date('${dateStr}'),4]`)[2].getTime(),
       date.getTime(),
-      'parses date as extended type at in array'
+      'parses date as extended type in array'
+    );
+
+    t.strictSame(
+      JSONZ.parse(`[1,2,{_$_:'date',_$_value:'${dateStr}'},4]`)[2].getTime(),
+      date.getTime(),
+      'parses date from type container in array'
     );
 
     t.strictSame(
       JSONZ.parse(`{a:1,b:2,c:_date('${dateStr}'),d:4}`)['c'].getTime(),
       date.getTime(),
-      'parses date as extended type at in object'
+      'parses date as extended type in object'
+    );
+
+    t.strictSame(
+      JSONZ.parse(`{a:1,b:2,c:{_$_:'date',_$_value:'${dateStr}'},d:4}`)['c'].getTime(),
+      date.getTime(),
+      'parses date from type container in object'
     );
 
     t.strictSame(
@@ -531,6 +552,51 @@ t.test('parse(text, reviver)', t => {
     JSONZ.parse('{a:{b:2}}', function (k, v) { return (k === 'b' && this.b) ? 'revived' : v; }),
     {a: {b: 'revived'}},
     'sets `this` to the parent value'
+  );
+
+  t.end();
+});
+
+t.test('global parse options', t => {
+  const dateStr = '2019-07-28T08:49:58.202Z';
+  const date = new Date(dateStr);
+
+  JSONZ.setParseOptions({reviveTypedContainers: false});
+
+  t.strictSame(
+    JSONZ.parse(`{_$_:'date',_$_value:'${dateStr}'}`),
+    {_$_: 'date', _$_value: dateStr},
+    'revival of type containers is defeated'
+  );
+
+  JSONZ.setParseOptions(null);
+
+  t.strictSame(
+    JSONZ.parse(`{_$_:'date',_$_value:'${dateStr}'}`),
+    {_$_: 'date', _$_value: dateStr},
+    'setting null options has no effect'
+  );
+
+  t.strictSame(
+    JSONZ.parse(`{_$_:'date',_$_value:'${dateStr}'}`, {reviveTypedContainers: true}).getTime(),
+    date.getTime(),
+    'revival of type containers can be restored by per-call option'
+  );
+
+  JSONZ.setParseOptions({reviver: (key, value) => value === 77 ? 66 : value});
+
+  t.strictSame(
+    JSONZ.parse(`[1,2,77,4]`),
+    [1, 2, 66, 4],
+    'global reviver works'
+  );
+
+  JSONZ.resetParseOptions();
+
+  t.strictSame(
+    JSONZ.parse(`[1,2,77,4]`),
+    [1, 2, 77, 4],
+    'global reviver can be cleared by reset'
   );
 
   t.end();
