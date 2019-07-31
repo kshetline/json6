@@ -67,6 +67,7 @@ export function addTypeHandler(handler: JsonZTypeHandler): void;
 export function removeTypeHandler(typeName: string): void;
 export function resetStandardTypeHandlers(): void;
 export function restoreStandardTypeHandlers(): void;
+export function globalizeTypeHandlers(prefix?: string): void;
 
 export const DELETE: Symbol;
 

@@ -603,5 +603,9 @@ describe('JSONZ', () => {
     assert.strictEqual(JSONZ.stringify([date, new Double(2)]), "[_date('2019-07-28T08:49:58.202Z'),_double(2)]");
     JSONZ.resetStandardTypeHandlers();
     assert.strictEqual(JSONZ.stringify([date, new Double(2)]), "[_date('2019-07-28T08:49:58.202Z'),{value:4}]");
+
+    assert.strictEqual(global._date, undefined);
+    JSONZ.globalizeTypeHandlers();
+    assert.strictEqual(global._date('2019-07-28T08:49:58.202Z').getTime(), date.getTime());
   });
 });

@@ -33,7 +33,7 @@ The following features, which are not supported in standard JSON, have been adde
 - Unquoted object keys may include character escapes.
 - Character escapes with two hex digits (`\xXX`) are supported for parsing, as well as the standard four digit `\uXXXX` form.
 - Object keys may be single quoted or backtick quoted.
-- Object name/property pairs may have a single trailing comma.
+- Object key/value pairs may have a single trailing comma.
 
 ### Arrays
 
@@ -98,7 +98,7 @@ The following features, which are not supported in standard JSON, have been adde
 No \\n's!",
   million: 1_000_000, // Underscore separators in numbers allowed
   hexadecimal: 0xdecaf,
-  // Leading 0 indicates octal if no non-octal (8, 9) digits follow 
+  // Leading 0 indicates octal if no non-octal digits (8, 9) follow 
   octal: [0o7, 074],
   binary: 0b100101,
   leadingDecimalPoint: .8675309, andTrailing: 8675309.,
@@ -112,7 +112,7 @@ No \\n's!",
   // Function-like extended types. This is revived as a JavaScript `Date` object
   date: _date('2019-07-28T08:49:58.202Z'),
   // Type container extended types. This is optionally revived as a JavaScript `Date` object
-  date: {_$_: 'date', _$_value: '2019-07-28T08:49:58.202Z'},
+  date2: {"_$_": "date", "_$_value": "2019-07-28T08:49:58.202Z"},
   "backwardsCompatible": "with JSON",
 }
 ```
@@ -151,12 +151,17 @@ Parses a JSON-Z string, constructing the JavaScript value or object described by
 
 #### Syntax
 
-    JSONZ.parse(text[, reviver])
+    JSONZ.parse(text[, reviver][, options])
+
+This works very much like [`JSON.parse`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/JSON/parse), with the addition of the `options` parameter, and that the `reviver` function is passed a third argument, `holder`, in addition to `key` and `value`, which lets the `reviver` know the array or object that contains the value being examined.
 
 #### Parameters
 
 - `text`: The string to parse as JSON-Z.
 - `reviver`: If a function, this prescribes how the value originally produced by parsing is transformed, before being returned.
+- `options`: An object with the following properties:
+  - `reviveTypedContainers`: If `true` (the default is `false`), objects which take the form of an extended type container, e.g. `{"_$_": "date", "_$_value": "2019-07-28T08:49:58.202Z"}`, can be revived as specific object classes, such as `Date`.
+  - `reviver`: An alternate means of providing a reviver function.
 
 #### Return value
 
@@ -165,6 +170,8 @@ The object corresponding to the given JSON-Z text.
 ### JSONZ.stringify()
 
 Converts a JavaScript value to a JSON-Z string, optionally replacing values if a replacer function is specified, or optionally including only the specified properties if a replacer array is specified.
+
+This works very much like [`JSON.stringify`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/JSON/stringify), with the addition of the `options` parameter, and that the `replacer` function is passed a third argument, `holder`, in addition to `key` and `value`, which lets the `replacer` know the array or object that contains the value being examined.
 
 #### Syntax
 
@@ -180,7 +187,7 @@ Converts a JavaScript value to a JSON-Z string, optionally replacing values if a
 - `space`: A string or number that is used to insert white space into the output JSON-Z string for readability purposes. If this is a number, it indicates the number of space characters to use as white space; this number is capped at 10. Values less than 1 indicate that no space should be used. If this is a string, the string (or the first 10 characters of the string, if it's longer than that) is used as white space. A single space adds white space without adding indentation. If this parameter is not provided (or is null), no white space is added. If indenting white space is used, trailing commas can optionally appear in objects and arrays.
 - `options`: An object with the following properties:
   - `extendedPrimitives`: If `true` (the default is `false`) this enables direct stringification of `Infinity`, `-Infinity`, and `NaN`. Otherwise these values become `null`.
-  - `extendedTypes`: If `JSONZ.ExtendedTypeMode.AS_FUNCTIONS` or `JSONZ.ExtendedTypeMode.AS_OBJECTS` (the default is `JSONZ.ExtendedTypeMode.OFF`), this enables special representation of additional data types, such as `_date("2019-07-28T08:49:58.202Z")`, which can be parsed directly as a JavaScript `Date` object, or `{_$_: 'date', _$_value: '2019-07-28T08:49:58.202Z'}`, which can be automatically rendered as a `Date` object by a built-in replacer.
+  - `extendedTypes`: If `JSONZ.ExtendedTypeMode.AS_FUNCTIONS` or `JSONZ.ExtendedTypeMode.AS_OBJECTS` (the default is `JSONZ.ExtendedTypeMode.OFF`), this enables special representation of additional data types, such as `_date("2019-07-28T08:49:58.202Z")`, which can be parsed directly as a JavaScript `Date` object, or `{"_$_": "date", "_$_value": "2019-07-28T08:49:58.202Z"}`, which can be automatically rendered as a `Date` object by a built-in replacer.
   - `primitiveBigDecimal`: If `true` (the default is `false`) this enables direct stringification of big decimals using the '`m`' suffix. Otherwise big decimals are provided as quoted strings or extended types. (Note: The '`m`' suffix can't be parsed as current valid JavaScript, but it is potentially a future valid standard notation.)
   - `primitiveBigInt`: If `true` (the default is `false`) this enables direct stringification of big integers using the '`n`' suffix. Otherwise big integers are provided as quoted strings or extended types.
   - `quote`: A string representing the quote character to use when serializing strings (single quote `'` or double quote `"`), or one of the following values:
@@ -269,7 +276,7 @@ Sets global options which will be used for all calls to `JSONZ.stringify()`. The
 
 #### Parameters
 
-- `options`: This can be an object just as described for `JSONZ.stringify()`, or it can be one of the following constants:
+- `options`: This can be an object just as described for [`JSONZ.stringify()`](#jsonzstringify), or it can be one of the following constants:
   - `JSONZ.OptionSet.MAX_COMPATIBILITY`: These are the options which make the output of JSON-Z fully JSON-compliant.
   - `JSONZ.OptionSet.RELAXED`: These options produce output which is fully-valid (albeit cutting-edge) JavaScript, removing unnecessary quotes, favoring single quotes, permitting values like `undefined` and `NaN` and sparse arrays.
   - `JSONZ.OptionSet.THE_WORKS`: This set of options pulls out all of the stops, creating output which generally will have to be parsed back using JSON-Z, included function-style extended types and big decimal numbers.
@@ -279,7 +286,6 @@ Sets global options which will be used for all calls to `JSONZ.stringify()`. The
 
 This restores the default global stringification options for JSON-Z. It is equivalent to `JSONZ.setOptions(JSONZ.OptionSet.MAX_COMPATIBILITY)`.
 
-
 ### JSONZ.setParseOptions(options)
 
 Sets global options which will be used for all calls to `JSONZ.parse()`. The specific options passed to `JSONZ.parse()` itself override the global options on a per-option basis.
@@ -287,26 +293,77 @@ Sets global options which will be used for all calls to `JSONZ.parse()`. The spe
 #### Parameters
 
 - `options`: An object with the following properties:
-  - reviveTypedContainers: If `true` (the default is `false`), objects which take the form of an extended type container, e.g. `{_$_: 'date', _$_value: '2019-07-28T08:49:58.202Z'}`, can be revived as specific object classes, such as `Date`.
+  - `reviveTypedContainers`: Same as described for [`JSONZ.parse()`](#jsonzparse).
   - `reviver`: A global reviver function.
 
 ### JSONZ.resetParseOptions()
 
 Resets the global parsing options, i.e. no automatic type container revival, no global revival function.
 
+### JSONZ.addTypeHandler(handler)
+
+This adds a global extended type handler. These handlers allow JSON-Z to parse and stringify special data types beyond the arrays, simple objects, and primitives supported by standard JSON. Here, as an example, is the built-in handler for `Date` objects:
+
+```javascript
+const dateHandler = {
+  name: 'date',
+  test: obj => obj instanceof Date,
+  creator: date => new Date(date),
+  serializer: date => date.toISOString(),
+};
+```
+
+When adding multiple type handlers, the most recently added handlers have priority over previous type handlers, which is important if it's possible for the `test` function to recognize objects or values also recognized by other handlers.
+
+The `extendedTypes` option for `JSONZ.stringify()` lets you choose between two formats for extended types:
+
+`JSONZ.ExtendedTypeMode.AS_FUNCTIONS` format:
+
+     _date('2019-07-28T08:49:58.202Z')
+
+The disadvantage of this format is that it can't be parsed as standard JSON. The advantage is that it _is valid JavaScript_, and it works better as JSON-P. 
+
+As long as `_date` is a global function (see [`JSONZ.globalizeTypeHandlers`](#jsonzglobalizetypehandlers)), the date object can be revived. To help with possible global namespace conflicts, the option `typePrefix` can be changed to something like `'_jsonz_'`, which will result in output like this:
+
+     _jsonz_date("2019-07-28T08:49:58.202Z")
+
+`JSONZ.ExtendedTypeMode.AS_OBJECTS` format:
+
+     {"_$_": "date", "_$_value": "2019-07-28T08:49:58.202Z"}
+
+This has the advantage of being valid standard JSON, and even without using JSON-Z on the receiving end, the right reviver function can convert this to a `Date`. The disadvantage is that it's harder to use this format with JSON-P, as there's no natural place to intercept the data and convert it.
+
+`JSONZ.ExtendedTypeMode.OFF` disables both of the above options.
+
+### JSONZ.globalizeTypeHandlers([prefix])
+
+This function registers your type handlers (and the built-in type handlers) as global functions, which facilitates the process of handling JSON-Z output as JSON-P. The optional `prefix` argument (which needs to be either a single underscore (the default), or a valid JavaScript identifier that both begins and ends in an underscore) lets you control how these functions use the global namespace. If you change the default prefix, that same prefix needs to be used as an option by the call to `JSONZ.stringify()` which creates the output that you're consuming.
+
+### JSONZ.removeTypeHandler(typeName)
+
+This function removes the type handler for the given `typeName`.
+
+### JSONZ.resetStandardTypeHandlers()
+
+This removes all user-added type handlers, and restores all built-in  type handlers.
+
+### JSONZ.restoreStandardTypeHandlers()
+
+This restores all built-in  type handlers, leaving any user-added type handlers.
+
 ### Node.js `require()` JSON-Z files
 
 When using Node.js, you can `require()` JSON-Z files by adding the following
 statement.
 
-```
+```javascript
 require('json-z/lib/register')
 ```
 
 Then you can load a JSON-Z file with a Node.js `require()` statement. For
 example:
 
-```
+```javascript
 const config = require('./config.jsonz')
 ```
 
