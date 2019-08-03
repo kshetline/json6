@@ -97,6 +97,22 @@ describe('JSONZ', () => {
         assert.strictEqual(JSONZ.stringify([1,, 2], // eslint-disable-line no-sparse-arrays
           {extendedPrimitives: false, sparseArrays: false}), '[1,null,2]');
       });
+
+      it('stringifies arrays with hidden negative, non-integer and non-numeric keys', () => {
+        const a = [1, 2, 3];
+
+        a[-1] = 'foo';
+        a[4.5] = 'bar';
+        a['six'] = 'baz';
+
+        assert.strictEqual(JSONZ.stringify(a,
+          {revealHiddenArrayProperties: true}), "[1,2,3,'-1':'foo','4.5':'bar',six:'baz']");
+
+        a[4.5] = JSONZ.DELETE;
+
+        assert.strictEqual(JSONZ.stringify(a,
+          {revealHiddenArrayProperties: true, space: 1}), "[1, 2, 3, '-1': 'foo', six: 'baz']");
+      });
     });
 
     it('stringifies nulls', () => {
@@ -175,14 +191,14 @@ describe('JSONZ', () => {
           assert.strictEqual(JSONZ.stringify(
             big.toBigInt('4081516234268675309'),
             {primitiveBigInt: false, extendedTypes: JSONZ.ExtendedTypeMode.AS_FUNCTIONS}),
-          "_bigint('4081516234268675309')");
+          "_BigInt('4081516234268675309')");
         });
 
         it('stringifies bigint values as type containers', () => {
           assert.strictEqual(JSONZ.stringify(
             big.toBigInt('4081516234268675309'),
             {primitiveBigInt: false, extendedTypes: JSONZ.ExtendedTypeMode.AS_OBJECTS}),
-          "{_$_:'bigint',_$_value:'4081516234268675309'}");
+          "{_$_:'BigInt',_$_value:'4081516234268675309'}");
         });
       });
     }
@@ -219,14 +235,14 @@ describe('JSONZ', () => {
           assert.strictEqual(JSONZ.stringify(
             big.toBigDecimal('2.718281828459045'),
             {primitiveBigDecimal: false, extendedTypes: JSONZ.ExtendedTypeMode.AS_FUNCTIONS}),
-          "_bigdecimal('2.718281828459045')");
+          "_BigDecimal('2.718281828459045')");
         });
 
         it('stringifies bigdecimal values as type containers', () => {
           assert.strictEqual(JSONZ.stringify(
             big.toBigDecimal('2.718281828459045'),
             {primitiveBigDecimal: false, extendedTypes: JSONZ.ExtendedTypeMode.AS_OBJECTS}),
-          "{_$_:'bigdecimal',_$_value:'2.718281828459045'}");
+          "{_$_:'BigDecimal',_$_value:'2.718281828459045'}");
         });
       });
     }
@@ -234,7 +250,7 @@ describe('JSONZ', () => {
     describe('extended type', () => {
       it('stringifies Date objects as extended types', () => {
         assert.strictEqual(JSONZ.stringify(new Date(Date.UTC(2019, 6, 28, 8, 49, 58, 202))),
-          "_date('2019-07-28T08:49:58.202Z')");
+          "_Date('2019-07-28T08:49:58.202Z')");
       });
     });
 
@@ -596,16 +612,18 @@ describe('JSONZ', () => {
     const dateStr = '2019-07-28T08:49:58.202Z';
     const date = new Date(dateStr);
 
-    JSONZ.removeTypeHandler('date');
+    JSONZ.removeTypeHandler('Date');
     JSONZ.removeTypeHandler('notThere');
     assert.strictEqual(JSONZ.stringify(date), "'2019-07-28T08:49:58.202Z'");
     JSONZ.restoreStandardTypeHandlers();
-    assert.strictEqual(JSONZ.stringify([date, new Double(2)]), "[_date('2019-07-28T08:49:58.202Z'),_double(2)]");
+    assert.strictEqual(JSONZ.stringify([date, new Double(2)]), "[_Date('2019-07-28T08:49:58.202Z'),_double(2)]");
     JSONZ.resetStandardTypeHandlers();
-    assert.strictEqual(JSONZ.stringify([date, new Double(2)]), "[_date('2019-07-28T08:49:58.202Z'),{value:4}]");
+    assert.strictEqual(JSONZ.stringify([date, new Double(2)]), "[_Date('2019-07-28T08:49:58.202Z'),{value:4}]");
+    assert.strictEqual(JSONZ.stringify(new Set([4, 5])), '_Set([4,5])');
+    assert.strictEqual(JSONZ.stringify(new Map([['foo', 4], ['bar', 5]])), "_Map([['foo',4],['bar',5]])");
 
-    assert.strictEqual(global._date, undefined);
+    assert.strictEqual(global._Date, undefined);
     JSONZ.globalizeTypeHandlers();
-    assert.strictEqual(global._date('2019-07-28T08:49:58.202Z').getTime(), date.getTime());
+    assert.strictEqual(global._Date('2019-07-28T08:49:58.202Z').getTime(), date.getTime());
   });
 });

@@ -30,6 +30,7 @@ export interface JsonZOptions {
   quote?: '"' | "'" | Quote;
   quoteAllKeys?: boolean;
   replacer?: JsonZReplacer | JsonZAllowedKeys;
+  revealHiddenArrayProperties?: boolean;
   space?: string | number | String | Number;
   sparseArrays?: boolean;
   trailingComma?: boolean;

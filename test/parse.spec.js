@@ -339,63 +339,75 @@ t.test('parse(text)', t => {
     const date = new Date(dateStr);
 
     t.strictSame(
-      JSONZ.parse(`_date('${dateStr}')`).getTime(),
+      JSONZ.parse(`_Date('${dateStr}')`).getTime(),
       date.getTime(),
       'parses date as extended type at root'
     );
 
     t.strictSame(
-      JSONZ.parse(`{_$_:'date',_$_value:'${dateStr}'}`).getTime(),
+      JSONZ.parse(`{_$_:'Date',_$_value:'${dateStr}'}`).getTime(),
       date.getTime(),
       'parses date as from type container at root'
     );
 
     t.ok(
-      isNaN(JSONZ.parse(`_date()`, {}).getTime()),
+      isNaN(JSONZ.parse(`_Date()`, {}).getTime()),
       'parses date without argument'
     );
 
     t.strictSame(
-      JSONZ.parse(`[1,2,_date('${dateStr}'),4]`)[2].getTime(),
+      JSONZ.parse(`[1,2,_Date('${dateStr}'),4]`)[2].getTime(),
       date.getTime(),
       'parses date as extended type in array'
     );
 
     t.strictSame(
-      JSONZ.parse(`[1,2,{_$_:'date',_$_value:'${dateStr}'},4]`)[2].getTime(),
+      JSONZ.parse(`[1,2,{_$_:'Date',_$_value:'${dateStr}'},4]`)[2].getTime(),
       date.getTime(),
       'parses date from type container in array'
     );
 
     t.strictSame(
-      JSONZ.parse(`{a:1,b:2,c:_date('${dateStr}'),d:4}`)['c'].getTime(),
+      JSONZ.parse(`{a:1,b:2,c:_Date('${dateStr}'),d:4}`)['c'].getTime(),
       date.getTime(),
       'parses date as extended type in object'
     );
 
     t.strictSame(
-      JSONZ.parse(`{a:1,b:2,c:{_$_:'date',_$_value:'${dateStr}'},d:4}`)['c'].getTime(),
+      JSONZ.parse(`{a:1,b:2,c:{_$_:'Date',_$_value:'${dateStr}'},d:4}`)['c'].getTime(),
       date.getTime(),
       'parses date from type container in object'
     );
 
     t.strictSame(
-      JSONZ.parse(`_$y310_date   // comment
+      JSONZ.parse(`_$y310_Date   // comment
       ( /* another comment */'${dateStr}'  )  `).getTime(),
       date.getTime(),
       'parses extended types with arbitrary prefixes, embedded whitespace, and comments'
     );
 
     t.strictSame(
-      JSONZ.parse("_bigint('-123')").toString(),
+      JSONZ.parse("_BigInt('-123')").toString(),
       '-123',
       'parses bigint as extended type'
     );
 
     t.strictSame(
-      JSONZ.parse("_bigdecimal('3.14')").toString(),
+      JSONZ.parse("_BigDecimal('3.14')").toString(),
       '3.14',
       'parses bigdecimal as extended type'
+    );
+
+    t.strictSame(
+      Array.from(JSONZ.parse('_Set([1,2,3])')),
+      [1, 2, 3],
+      'parses Set as extended type'
+    );
+
+    t.strictSame(
+      Array.from(JSONZ.parse('_Map([[1,2]])')),
+      [[1, 2]],
+      'parses Set as extended type'
     );
 
     t.strictSame(
@@ -564,21 +576,21 @@ t.test('global parse options', t => {
   JSONZ.setParseOptions({reviveTypedContainers: false});
 
   t.strictSame(
-    JSONZ.parse(`{_$_:'date',_$_value:'${dateStr}'}`),
-    {_$_: 'date', _$_value: dateStr},
+    JSONZ.parse(`{_$_:'Date',_$_value:'${dateStr}'}`),
+    {_$_: 'Date', _$_value: dateStr},
     'revival of type containers is defeated'
   );
 
   JSONZ.setParseOptions(null);
 
   t.strictSame(
-    JSONZ.parse(`{_$_:'date',_$_value:'${dateStr}'}`),
-    {_$_: 'date', _$_value: dateStr},
+    JSONZ.parse(`{_$_:'Date',_$_value:'${dateStr}'}`),
+    {_$_: 'Date', _$_value: dateStr},
     'setting null options has no effect'
   );
 
   t.strictSame(
-    JSONZ.parse(`{_$_:'date',_$_value:'${dateStr}'}`, {reviveTypedContainers: true}).getTime(),
+    JSONZ.parse(`{_$_:'Date',_$_value:'${dateStr}'}`, {reviveTypedContainers: true}).getTime(),
     date.getTime(),
     'revival of type containers can be restored by per-call option'
   );

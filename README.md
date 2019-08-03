@@ -73,7 +73,7 @@ The following features, which are not supported in standard JSON, have been adde
 ### Replacer functions
 
 - As part of handling `undefined` values, when a replacer function returns `undefined`, that will itself become the encoded value of the value which has been replaced.
-- Replacer functions can return the special value `JSONZ.DELETE` to indicate the a key/value pair in an object be deleted, or that a slot in an array be left empty.
+- Replacer functions can return the special value `JSONZ.DELETE` to indicate that a key/value pair in an object be deleted, or that a slot in an array be left empty.
 - A global replacer function can be specified.
 - For the benefit of anonymous (arrow) functions, which do not have their own `this`, replacer functions are passed the holder of a key/value pair as a third argument to the function.
 
@@ -110,9 +110,9 @@ No \\n's!",
   trailingComma: 'in objects', andIn: ['arrays',],
   sparseArray: [1, 2, , , 5],
   // Function-like extended types. This is revived as a JavaScript `Date` object
-  date: _date('2019-07-28T08:49:58.202Z'),
+  date: _Date('2019-07-28T08:49:58.202Z'),
   // Type container extended types. This is optionally revived as a JavaScript `Date` object
-  date2: {"_$_": "date", "_$_value": "2019-07-28T08:49:58.202Z"},
+  date2: {"_$_": "Date", "_$_value": "2019-07-28T08:49:58.202Z"},
   "backwardsCompatible": "with JSON",
 }
 ```
@@ -130,6 +130,12 @@ npm install json-z
 
 ```
 const JSONZ = require('json-z')
+```
+
+Or, as TypeScript:
+
+```typescript
+import * as JSONZ from 'json-z';
 ```
 
 ### Browsers
@@ -160,7 +166,7 @@ This works very much like [`JSON.parse`](https://developer.mozilla.org/en-US/doc
 - `text`: The string to parse as JSON-Z.
 - `reviver`: If a function, this prescribes how the value originally produced by parsing is transformed, before being returned.
 - `options`: An object with the following properties:
-  - `reviveTypedContainers`: If `true` (the default is `false`), objects which take the form of an extended type container, e.g. `{"_$_": "date", "_$_value": "2019-07-28T08:49:58.202Z"}`, can be revived as specific object classes, such as `Date`.
+  - `reviveTypedContainers`: If `true` (the default is `false`), objects which take the form of an extended type container, e.g. `{"_$_": "Date", "_$_value": "2019-07-28T08:49:58.202Z"}`, can be revived as specific object classes, such as `Date`.
   - `reviver`: An alternate means of providing a reviver function.
 
 #### Return value
@@ -187,7 +193,7 @@ This works very much like [`JSON.stringify`](https://developer.mozilla.org/en-US
 - `space`: A string or number that is used to insert white space into the output JSON-Z string for readability purposes. If this is a number, it indicates the number of space characters to use as white space; this number is capped at 10. Values less than 1 indicate that no space should be used. If this is a string, the string (or the first 10 characters of the string, if it's longer than that) is used as white space. A single space adds white space without adding indentation. If this parameter is not provided (or is null), no white space is added. If indenting white space is used, trailing commas can optionally appear in objects and arrays.
 - `options`: An object with the following properties:
   - `extendedPrimitives`: If `true` (the default is `false`) this enables direct stringification of `Infinity`, `-Infinity`, and `NaN`. Otherwise these values become `null`.
-  - `extendedTypes`: If `JSONZ.ExtendedTypeMode.AS_FUNCTIONS` or `JSONZ.ExtendedTypeMode.AS_OBJECTS` (the default is `JSONZ.ExtendedTypeMode.OFF`), this enables special representation of additional data types, such as `_date("2019-07-28T08:49:58.202Z")`, which can be parsed directly as a JavaScript `Date` object, or `{"_$_": "date", "_$_value": "2019-07-28T08:49:58.202Z"}`, which can be automatically rendered as a `Date` object by a built-in replacer.
+  - `extendedTypes`: If `JSONZ.ExtendedTypeMode.AS_FUNCTIONS` or `JSONZ.ExtendedTypeMode.AS_OBJECTS` (the default is `JSONZ.ExtendedTypeMode.OFF`), this enables special representation of additional data types, such as `_Date("2019-07-28T08:49:58.202Z")`, which can be parsed directly as a JavaScript `Date` object, or `{"_$_": "Date", "_$_value": "2019-07-28T08:49:58.202Z"}`, which can be automatically rendered as a `Date` object by a built-in replacer.
   - `primitiveBigDecimal`: If `true` (the default is `false`) this enables direct stringification of big decimals using the '`m`' suffix. Otherwise big decimals are provided as quoted strings or extended types. (Note: The '`m`' suffix can't be parsed as current valid JavaScript, but it is potentially a future valid standard notation.)
   - `primitiveBigInt`: If `true` (the default is `false`) this enables direct stringification of big integers using the '`n`' suffix. Otherwise big integers are provided as quoted strings or extended types.
   - `quote`: A string representing the quote character to use when serializing strings (single quote `'` or double quote `"`), or one of the following values:
@@ -306,7 +312,7 @@ This adds a global extended type handler. These handlers allow JSON-Z to parse a
 
 ```javascript
 const dateHandler = {
-  name: 'date',
+  name: 'Date',
   test: obj => obj instanceof Date,
   creator: date => new Date(date),
   serializer: date => date.toISOString(),
@@ -319,17 +325,17 @@ The `extendedTypes` option for `JSONZ.stringify()` lets you choose between two f
 
 `JSONZ.ExtendedTypeMode.AS_FUNCTIONS` format:
 
-     _date('2019-07-28T08:49:58.202Z')
+     _Date('2019-07-28T08:49:58.202Z')
 
 The disadvantage of this format is that it can't be parsed as standard JSON. The advantage is that it _is valid JavaScript_, and it works better as JSON-P. 
 
-As long as `_date` is a global function (see [`JSONZ.globalizeTypeHandlers`](#jsonzglobalizetypehandlers)), the date object can be revived. To help with possible global namespace conflicts, the option `typePrefix` can be changed to something like `'_jsonz_'`, which will result in output like this:
+As long as `_Date` is a global function (see [`JSONZ.globalizeTypeHandlers`](#jsonzglobalizetypehandlersprefix)), the date object can be revived. To help with possible global namespace conflicts, the option `typePrefix` can be changed to something like `'_jsonz_'`, which will result in output like this:
 
-     _jsonz_date("2019-07-28T08:49:58.202Z")
+     _jsonz_Date("2019-07-28T08:49:58.202Z")
 
 `JSONZ.ExtendedTypeMode.AS_OBJECTS` format:
 
-     {"_$_": "date", "_$_value": "2019-07-28T08:49:58.202Z"}
+     {"_$_": "Date", "_$_value": "2019-07-28T08:49:58.202Z"}
 
 This has the advantage of being valid standard JSON, and even without using JSON-Z on the receiving end, the right reviver function can convert this to a `Date`. The disadvantage is that it's harder to use this format with JSON-P, as there's no natural place to intercept the data and convert it.
 
@@ -417,7 +423,7 @@ MIT. See [LICENSE.md](./LICENSE.md) for details.
 
 ## Credits
 
-[Assem Kishore](https://github.com/aseemk) founded this project as JSON5.
+[Assem Kishore](https://github.com/aseemk) founded this project as [JSON5](https://json5.org/).
 
 [Michael Bolin](http://bolinfest.com/) independently arrived at and published
 some of these same ideas with awesome explanations and detail. Recommended
@@ -443,4 +449,4 @@ supporter, contributing multiple patches and ideas.
 with ES5, wrote the official JSON5 specification, completely rewrote the
 codebase from the ground up, and is actively maintaining this project.
 
-[Kerry Shetline](https://github.com/kshetline) branched off from the JSON5 project to create JSON-Z.
+[Kerry Shetline](https://github.com/kshetline) branched off from the JSON5 project to create [JSON-Z](https://json-z.org/).

@@ -272,7 +272,7 @@ describe('JSONZ', () => {
 
       it('throws on invalid extended value syntax', () => {
         assert.throws(() => {
-          JSONZ.parse('_date["bar")');
+          JSONZ.parse('_Date["bar")');
         },
         err => {
           return err instanceof SyntaxError &&
@@ -281,7 +281,7 @@ describe('JSONZ', () => {
         });
 
         assert.throws(() => {
-          JSONZ.parse('_date');
+          JSONZ.parse('_Date');
         },
         err => {
           return err instanceof SyntaxError &&
@@ -290,7 +290,7 @@ describe('JSONZ', () => {
         });
 
         assert.throws(() => {
-          JSONZ.parse('_date(');
+          JSONZ.parse('_Date(');
         },
         err => {
           return err instanceof SyntaxError &&
@@ -299,7 +299,7 @@ describe('JSONZ', () => {
         });
 
         assert.throws(() => {
-          JSONZ.parse('_date("bar"{');
+          JSONZ.parse('_Date("bar"{');
         },
         err => {
           return err instanceof SyntaxError &&
@@ -308,7 +308,7 @@ describe('JSONZ', () => {
         });
 
         assert.throws(() => {
-          JSONZ.parse('_date("bar"');
+          JSONZ.parse('_Date("bar"');
         },
         err => {
           return err instanceof SyntaxError &&
