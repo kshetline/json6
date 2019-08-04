@@ -82,6 +82,14 @@ The following features, which are not supported in standard JSON, have been adde
 - A global reviver function can be specified.
 - For the benefit of anonymous (arrow) functions, which do not have their own `this`, reviver functions are passed the holder of a key/value pair as a third argument to the function.
 
+### Extended types
+
+In standard JSON, all values are either strings, numbers, booleans, or `null`s, or values are objects or arrays composed of the latter as well as other objects and arrays. JSON-Z optionally allows special handling for other data types, so that values such a `Date` or `Set` objects can be specifically represented as such, parsed and stringified distinctly without having to rely on reviver and replacer functions.
+
+- Built-in support for `Date`, `Map`, `Set`, and `Uint8Array` (using base64 representation). `Uint8ClampedArray` is also covered, treated as `Uint8Array`.
+- There is also built-in support for `BigInt` and "Big Decimal" values as extended types, an alternative to using plain numbers with `n` or `m` suffixes.
+- User-defined extended type handlers, which can both add new data types, or override the handling of built-in extended data types.
+
 [IdentifierName]: https://www.ecma-international.org/ecma-262/5.1/#sec-7.6
 
 [IEEE 754]: http://ieeexplore.ieee.org/servlet/opac?punumber=4610933
@@ -113,6 +121,8 @@ No \\n's!",
   date: _Date('2019-07-28T08:49:58.202Z'),
   // Type container extended types. This is optionally revived as a JavaScript `Date` object
   date2: {"_$_": "Date", "_$_value": "2019-07-28T08:49:58.202Z"},
+  // A relatively compact way to send and receive binary data
+  buffer: _Uint8Array('T25lLiBUd28uIEZpdmUuLi4gSSBtZWFuIHRocmVlIQ=='),
   "backwardsCompatible": "with JSON",
 }
 ```
@@ -315,7 +325,7 @@ const dateHandler = {
   name: 'Date',
   test: obj => obj instanceof Date,
   creator: date => new Date(date),
-  serializer: date => date.toISOString(),
+  serializer: date => (isNaN(date.getTime()) ? NaN : date.toISOString()),
 };
 ```
 

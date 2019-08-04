@@ -106,12 +106,12 @@ describe('JSONZ', () => {
         a['six'] = 'baz';
 
         assert.strictEqual(JSONZ.stringify(a,
-          {revealHiddenArrayProperties: true}), "[1,2,3,'-1':'foo','4.5':'bar',six:'baz']");
+          {revealHiddenArrayProperties: true}), "[1,2,3,#'-1':'foo',#'4.5':'bar',#six:'baz']");
 
         a[4.5] = JSONZ.DELETE;
 
         assert.strictEqual(JSONZ.stringify(a,
-          {revealHiddenArrayProperties: true, space: 1}), "[1, 2, 3, '-1': 'foo', six: 'baz']");
+          {revealHiddenArrayProperties: true, space: 1}), "[1, 2, 3, #'-1': 'foo', #six: 'baz']");
       });
     });
 
@@ -618,9 +618,11 @@ describe('JSONZ', () => {
     JSONZ.restoreStandardTypeHandlers();
     assert.strictEqual(JSONZ.stringify([date, new Double(2)]), "[_Date('2019-07-28T08:49:58.202Z'),_double(2)]");
     JSONZ.resetStandardTypeHandlers();
+    assert.strictEqual(JSONZ.stringify(new Date(NaN)), '_Date(NaN)');
     assert.strictEqual(JSONZ.stringify([date, new Double(2)]), "[_Date('2019-07-28T08:49:58.202Z'),{value:4}]");
     assert.strictEqual(JSONZ.stringify(new Set([4, 5])), '_Set([4,5])');
-    assert.strictEqual(JSONZ.stringify(new Map([['foo', 4], ['bar', 5]])), "_Map([['foo',4],['bar',5]])");
+    assert.strictEqual(JSONZ.stringify(new Map([['foo', 4], ['bar', 5]]), null, 1), "_Map([['foo', 4], ['bar', 5]])");
+    assert.strictEqual(JSONZ.stringify(new Uint8Array([0, 1, 2, 253, 254, 255])), "_Uint8Array('AAEC/f7/')");
 
     assert.strictEqual(global._Date, undefined);
     JSONZ.globalizeTypeHandlers();

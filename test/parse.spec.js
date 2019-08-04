@@ -407,7 +407,13 @@ t.test('parse(text)', t => {
     t.strictSame(
       Array.from(JSONZ.parse('_Map([[1,2]])')),
       [[1, 2]],
-      'parses Set as extended type'
+      'parses Map as extended type'
+    );
+
+    t.strictSame(
+      Array.from(JSONZ.parse('_Uint8Array("AAEC/f7/")')),
+      [0, 1, 2, 253, 254, 255],
+      'parses Uint8Array as extended type'
     );
 
     t.strictSame(
@@ -564,6 +570,36 @@ t.test('parse(text, reviver)', t => {
     JSONZ.parse('{a:{b:2}}', function (k, v) { return (k === 'b' && this.b) ? 'revived' : v; }),
     {a: {b: 'revived'}},
     'sets `this` to the parent value'
+  );
+
+  t.end();
+});
+
+t.test('hidden array properties', t => {
+  const array1 = JSONZ.parse("[1, 2, 3, #foo: 'bar']");
+  const array2 = JSONZ.parse("[7, 8, 9, #baz: 'quux', 10]");
+  const array3 = JSONZ.parse("[#start: 77]");
+
+  t.strictSame(
+    array1['foo'],
+    'bar',
+    'hidden property correctly parsed'
+  );
+
+  t.strictSame(
+    array1.length,
+    3,
+    "hidden property doesn't effect array length"
+  );
+
+  t.ok(
+    array2.length === 4 && array2['baz'] === 'quux' && array2[3] === 10,
+    "hidden property works in middle of array"
+  );
+
+  t.ok(
+    array3.length === 0 && array3['start'] === 77,
+    "hidden property works at beginning of array"
   );
 
   t.end();

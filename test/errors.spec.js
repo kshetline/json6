@@ -594,6 +594,18 @@ describe('JSONZ', () => {
                         err.columnNumber === 3
         ));
       });
+
+      it('throws on trying to use array property syntax in non-array object', () => {
+        assert.throws(() => {
+          JSONZ.parse('{foo: #"bar"}');
+        },
+        err => (
+          err instanceof SyntaxError &&
+                        /^JSON-Z: invalid character '#'/.test(err.message) &&
+                        err.lineNumber === 1 &&
+                        err.columnNumber === 7
+        ));
+      });
     });
   });
 });
