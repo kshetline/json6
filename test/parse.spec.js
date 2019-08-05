@@ -572,6 +572,12 @@ t.test('parse(text, reviver)', t => {
     'sets `this` to the parent value'
   );
 
+  t.strictSame(
+    JSONZ.parse('{a:{b:"true"}}', function (k, v) { return (k === 'b') ? JSONZ.parse(v) : v; }),
+    {a: {b: true}},
+    'make sure parse is reëntrant'
+  );
+
   t.end();
 });
 

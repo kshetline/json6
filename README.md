@@ -1,11 +1,16 @@
 # JSONZ – JSON for Everyone
 
+[![NPM Stats](https://nodei.co/npm/json-z.png)](https://npmjs.org/package/json-z/)
+
 [![Build Status](https://travis-ci.com/kshetline/json-z.svg?branch=master)][Build Status]
 [![Coverage Status](https://coveralls.io/repos/github/kshetline/json-z/badge.svg?branch=master)](https://coveralls.io/github/kshetline/json-z?branch=master)
+[![npm](https://img.shields.io/npm/v/json-z.svg)](https://npmjs.org/package/json-z/)
+[![npm downloads](https://img.shields.io/npm/dm/json-z.svg)](https://npmjs.org/package/json-z/)
+[![npm bundle size](https://img.shields.io/bundlephobia/min/json-z.svg)](https://npmjs.org/package/json-z/)
 
 JSON-Z is a superset of [JSON] that aims to alleviate some of the limitations of JSON by expanding its syntax to include some productions from [ECMAScript 5.1], [ECMAScript 6.0], and later.
 
-The goal of JSON-Z is to increase flexibility of parsing while, by default, maintaining maximum compatibility with standard JSON for stringification. JSON-Z output, like JSON, is also valid JavaScript (with one optional exception, matching a possible future JavaScript feature).
+The goal of JSON-Z is to increase flexibility of parsing while, by default, maintaining maximum compatibility with standard JSON for stringification. JSON-Z output, like JSON, is also valid JavaScript (with two *optional* exceptions).
 
 This JavaScript library is the official reference implementation for JSON-Z parsing and serialization libraries.
 
@@ -39,6 +44,7 @@ The following features, which are not supported in standard JSON, have been adde
 
 - Array elements may have a single trailing comma.
 - Arrays may be sparse, e.g. `[1, , 3, 4]`.
+- If arrays have string keys with associated values (not recommended!), e.g. `[1, 2, 3, #frequency: "Kenneth"]`, such key/value pairs can be parsed and optionally stringified. This also applies to numeric keys which are negative or non-integer. (The `#` is not part of the key, it simply precedes any explicitly keyed value in an array.) Key/value pairs such as these are normally hidden, and do not affect the `length` property of an array.
 
 ### Strings
 
@@ -165,6 +171,8 @@ The JSON-Z API is compatible with the [JSON API]. Type definitions to support Ty
 
 Parses a JSON-Z string, constructing the JavaScript value or object described by the string. An optional reviver function can be provided to perform a transformation on the resulting object before it is returned.
 
+_Note: One important change from JSON5 is that the `JSONZ.parse()` function is re-entrant, so it is safe to call `JSONZ.parse()` from within reviver functions and extended type handlers._
+
 #### Syntax
 
     JSONZ.parse(text[, reviver][, options])
@@ -204,7 +212,7 @@ This works very much like [`JSON.stringify`](https://developer.mozilla.org/en-US
 - `options`: An object with the following properties:
   - `extendedPrimitives`: If `true` (the default is `false`) this enables direct stringification of `Infinity`, `-Infinity`, and `NaN`. Otherwise these values become `null`.
   - `extendedTypes`: If `JSONZ.ExtendedTypeMode.AS_FUNCTIONS` or `JSONZ.ExtendedTypeMode.AS_OBJECTS` (the default is `JSONZ.ExtendedTypeMode.OFF`), this enables special representation of additional data types, such as `_Date("2019-07-28T08:49:58.202Z")`, which can be parsed directly as a JavaScript `Date` object, or `{"_$_": "Date", "_$_value": "2019-07-28T08:49:58.202Z"}`, which can be automatically rendered as a `Date` object by a built-in replacer.
-  - `primitiveBigDecimal`: If `true` (the default is `false`) this enables direct stringification of big decimals using the '`m`' suffix. Otherwise big decimals are provided as quoted strings or extended types. (Note: The '`m`' suffix can't be parsed as current valid JavaScript, but it is potentially a future valid standard notation.)
+  - `primitiveBigDecimal`: If `true` (the default is `false`) this enables direct stringification of big decimals using the '`m`' suffix. Otherwise big decimals are provided as quoted strings or extended types. _(Note: The '`m`' suffix can't be parsed as current valid JavaScript, but it is potentially a future valid standard notation.)_
   - `primitiveBigInt`: If `true` (the default is `false`) this enables direct stringification of big integers using the '`n`' suffix. Otherwise big integers are provided as quoted strings or extended types.
   - `quote`: A string representing the quote character to use when serializing strings (single quote `'` or double quote `"`), or one of the following values:
     - `JSONZ.Quote.DOUBLE`: Always quote with double quotes (this is the default).
@@ -213,6 +221,7 @@ This works very much like [`JSON.stringify`](https://developer.mozilla.org/en-US
     - `JSONZ.Quote.PREFER_SINGLE`: Quote with single quotes, but switch to single quotes or backticks to reduce the number of characters which have to be backslash escaped.
   - `quoteAllKeys`: By default (a `true` value), object keys are quoted, just as in standard JSON. If set to `false` quotes are omitted unless syntactically necessary.
   - `replacer`: Same as the `replacer` parameter.
+  - `revealHiddenArrayProperties`: Consider this an experimental option. While normally arrays should only have data stored using non-negative integer indices, data _can_ be stored in arrays using string keys and other types of numeric keys. This option will reveal and stringify such additional key/value pairs if present, but this is at the expense of making the JSON-Z output something that must be parsed back using JSON-Z, and is no longer directly usable as valid JavaScript.
   - `space`: Same as the `space` parameter. The default is no spacing.
   - `sparseArrays`: If `true` (the default is `false`) empty slots in arrays are represented with consecutive commas, e.g. `[1,,3]`. This can't be parsed as valid standard JSON, so by default such an array will be stringified as `[1,null,3]`
   - `trailingComma`: If `true` (the default is `false`), the final item in an indented object or array has a terminating comma.
@@ -221,6 +230,18 @@ This works very much like [`JSON.stringify`](https://developer.mozilla.org/en-US
 #### Return value
 
 A JSON-Z string representing the value.
+
+#### Using obj.toJSON() and obj.toJSONZ()
+
+For use with the standard `JSON.stringify()`, any object being stringified can have an optional `toJSON()` method. This way an object can explicity tell `JSON.stringify()` how its value should be represented.
+
+JSON-Z can also use an object's `toJSON()` method, but other factors might take priority as follows:
+
+1. If an object has a `toJSONZ()` method, this takes highest priority. The value returned by `toJSONZ()` can be further modified by any replacer function in effect. Note that when `toJSONZ()` is called, two arguments are passed to this function: `key` (an array index or object property name) and `holder` (the parent array or parent object (if any) of the object).
+1. If an object can be converted by an extended type handler, that has the next priority. When `ExtendedTypeMode.AS_FUNCTIONS` is in effect, a conversion handled by an extended type handler is final. Replacer functions can, however, further act upon extended type conversions when `ExtendedTypeMode.AS_OBJECTS` is in effect.
+1. `toJSON()` is the next possible value conversion, but only if `toJSONZ()` has not already taken priority.
+1. Any active replacer function is then applied.
+1. Finally, special handling for `BigInt` and "big decimal" numbers takes place.
 
 ### JSONZ.hasBigInt()
 
@@ -295,7 +316,7 @@ Sets global options which will be used for all calls to `JSONZ.stringify()`. The
 - `options`: This can be an object just as described for [`JSONZ.stringify()`](#jsonzstringify), or it can be one of the following constants:
   - `JSONZ.OptionSet.MAX_COMPATIBILITY`: These are the options which make the output of JSON-Z fully JSON-compliant.
   - `JSONZ.OptionSet.RELAXED`: These options produce output which is fully-valid (albeit cutting-edge) JavaScript, removing unnecessary quotes, favoring single quotes, permitting values like `undefined` and `NaN` and sparse arrays.
-  - `JSONZ.OptionSet.THE_WORKS`: This set of options pulls out all of the stops, creating output which generally will have to be parsed back using JSON-Z, included function-style extended types and big decimal numbers.
+  - `JSONZ.OptionSet.THE_WORKS`: This set of options pulls out (nearly) all of the stops, creating output which generally will have to be parsed back using JSON-Z, including function-style extended types and big decimal numbers. `revealHiddenArrayProperties` remains false, however, and must be expressly activated.
 - `additionalOptions`: If `options` is an `OptionSet` value, `additionalOptions` can be used to make further options modifications.
 
 ### JSONZ.resetOptions()
@@ -397,7 +418,7 @@ npm install --global json-z
 ### Usage
 
 ```sh
-jsonz [options] <file>
+json-z [options] <file>
 ```
 
 If `<file>` is not provided, then STDIN is used.
