@@ -16,7 +16,7 @@ tap.test('CLI', t => {
     });
 
     proc.stdout.on('end', () => {
-      assert.strictEqual(output, '{"a":1,"b":2}');
+      assert.strictEqual(output, '{"$":100,"a":1,"b":2}');
       t.end();
     });
 
@@ -38,7 +38,7 @@ tap.test('CLI', t => {
     });
 
     proc.stdout.on('end', () => {
-      assert.strictEqual(output, '{"a":1,"b":2}');
+      assert.strictEqual(output, '{"$":100,"a":1,"b":2}');
       t.end();
     });
   });
@@ -60,7 +60,7 @@ tap.test('CLI', t => {
     });
 
     proc.stdout.on('end', () => {
-      assert.strictEqual(output, '{\n    "a": 1,\n    "b": 2\n}');
+      assert.strictEqual(output, '{\n    "$": 100,\n    "a": 1,\n    "b": 2\n}');
       t.end();
     });
   });
@@ -82,7 +82,7 @@ tap.test('CLI', t => {
     });
 
     proc.stdout.on('end', () => {
-      assert.strictEqual(output, '{\n\t"a": 1,\n\t"b": 2\n}');
+      assert.strictEqual(output, '{\n\t"$": 100,\n\t"a": 1,\n\t"b": 2\n}');
       t.end();
     });
   });
@@ -104,7 +104,7 @@ tap.test('CLI', t => {
           path.resolve(__dirname, 'output.json'),
           'utf8'
         ),
-        '{"a":1,"b":2}'
+        '{"$":100,"a":1,"b":2}'
       );
       t.end();
     });
@@ -202,7 +202,7 @@ tap.test('CLI', t => {
           path.resolve(__dirname, 'test.json'),
           'utf8'
         ),
-        '{"a":1,"b":2}'
+        '{"$":100,"a":1,"b":2}'
       );
       t.end();
     });

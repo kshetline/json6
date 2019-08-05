@@ -1,4 +1,4 @@
-# JSONZ – JSON for Everyone
+# JSON-Z – JSON for Everyone
 
 [![NPM Stats](https://nodei.co/npm/json-z.png)](https://npmjs.org/package/json-z/)
 

@@ -1,6 +1,6 @@
 {
   "name": "json-z",
-  "version": "3.0.1",
+  "version": "3.0.2",
   "description": "JSON for everyone.",
   "main": "lib/index.js",
   "bin": "lib/cli.js",
@@ -27,7 +27,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/json5/json5.git"
+    "url": "git+https://github.com/kshetline/json5.git"
   },
   "keywords": [
     "bigint",
