@@ -584,7 +584,7 @@ t.test('parse(text, reviver)', t => {
 t.test('hidden array properties', t => {
   const array1 = JSONZ.parse("[1, 2, 3, #foo: 'bar']");
   const array2 = JSONZ.parse("[7, 8, 9, #baz: 'quux', 10]");
-  const array3 = JSONZ.parse("[#start: 77]");
+  const array3 = JSONZ.parse('[#start: 77]');
 
   t.strictSame(
     array1['foo'],
@@ -600,12 +600,12 @@ t.test('hidden array properties', t => {
 
   t.ok(
     array2.length === 4 && array2['baz'] === 'quux' && array2[3] === 10,
-    "hidden property works in middle of array"
+    'hidden property works in middle of array'
   );
 
   t.ok(
     array3.length === 0 && array3['start'] === 77,
-    "hidden property works at beginning of array"
+    'hidden property works at beginning of array'
   );
 
   t.end();
