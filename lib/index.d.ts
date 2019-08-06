@@ -78,6 +78,6 @@ export function hasNativeBigInt(): boolean;
 
 export function hasBigDecimal(): boolean;
 
-export function setBigInt(bigIntClass: Function | boolean): void;
+export function setBigInt(bigIntClass: any): void;
 
-export function setBigDecimal(bigDoubleClass: Function): void;
+export function setBigDecimal(bigDoubleClass: any): void;
