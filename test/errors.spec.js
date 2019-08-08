@@ -216,6 +216,7 @@ describe('JSONZ', () => {
           '0x_12', '0x1__2', '0x12_',
           '0o_12', '0o1__2', '0o12_',
           '0b_11', '0b1__1', '0b11_',
+          'NaN_', '-NaN_', 'Infinity_', '-Infinity_',
         ];
 
         for (const badNumber of badNumbers) {

@@ -37,7 +37,7 @@ The following features, which are not supported in standard JSON, have been adde
 - Object keys may be unquoted ECMAScript 5.1 _[IdentifierName]_ s.
 - Unquoted object keys may include character escapes.
 - Character escapes with two hex digits (`\xXX`) are supported for parsing, as well as the standard four digit `\uXXXX` form.
-- Object keys may be single quoted or backtick quoted.
+- Object keys may be single quoted or backtick quoted (using backticks does not, however, invoke string interpolation).
 - Object key/value pairs may have a single trailing comma.
 
 ### Arrays

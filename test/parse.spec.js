@@ -19,6 +19,9 @@ function equalBigNumber(a, b) {
   else if (!!a !== !!b || !a) {
     return false;
   }
+  else if (typeof a.isNaN === 'function' && a.isNaN()) {
+    return typeof b.isNaN === 'function' && b.isNaN();
+  }
   else if (typeof a.equals === 'function') {
     return a.equals(b);
   }
@@ -326,6 +329,14 @@ t.test('parse(text)', t => {
         big.hasBigDecimal() ? 'parses bigdecimal' : 'parses best approximation of bigdecimal'
       );
     }
+
+    t.ok(equalBigNumber(JSONZ.parse('NaNm'), Decimal(NaN)), 'parses NaNm');
+    t.ok(equalBigNumber(JSONZ.parse('NaN_m'), Decimal(NaN)), 'parses NaN_m');
+    t.ok(equalBigNumber(JSONZ.parse('+NaN_m'), Decimal(NaN)), 'parses +NaN_m');
+    t.ok(equalBigNumber(JSONZ.parse('Infinitym'), Decimal(Infinity)), 'parses Infinitym');
+    t.ok(equalBigNumber(JSONZ.parse('Infinity_m'), Decimal(Infinity)), 'parses Infinity_m');
+    t.ok(equalBigNumber(JSONZ.parse('-Infinitym'), Decimal(-Infinity)), 'parses -Infinitym');
+    t.ok(equalBigNumber(JSONZ.parse('-Infinity_m'), Decimal(-Infinity)), 'parses -Infinity_m');
 
     JSONZ.setBigDecimal(null);
     t.ok(big.getBigDecimalType() === 'numeric', 'can disable big decimal support');
