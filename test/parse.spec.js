@@ -422,6 +422,18 @@ t.test('parse(text)', t => {
     );
 
     t.strictSame(
+      JSONZ.parse('_RegExp("/\\\\d+z/")').toString(),
+      '/\\d+z/',
+      'parses RegExp without flags as extended type'
+    );
+
+    t.strictSame(
+      JSONZ.parse('_RegExp("/\\\\d+z/gi")').toString(),
+      '/\\d+z/gi',
+      'parses RegExp with flags as extended type'
+    );
+
+    t.strictSame(
       Array.from(JSONZ.parse('_Uint8Array("AAEC/f7/")')),
       [0, 1, 2, 253, 254, 255],
       'parses Uint8Array as extended type'

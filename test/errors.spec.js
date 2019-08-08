@@ -316,6 +316,33 @@ describe('JSONZ', () => {
                             /^JSON-Z: invalid end of input/.test(err.message) &&
                             err.lineNumber === 1;
         });
+
+        assert.throws(() => {
+          JSONZ.parse('_RegExp("foo")');
+        },
+        err => {
+          return err instanceof SyntaxError &&
+                            /^JSON-Z: invalid regular expression/.test(err.message) &&
+                            err.lineNumber === 1;
+        });
+
+        assert.throws(() => {
+          JSONZ.parse('{_$_: "RegExp", _$_value: "foo"}', {reviveTypedContainers: true});
+        },
+        err => {
+          return err instanceof SyntaxError &&
+                            /^JSON-Z: invalid regular expression/.test(err.message) &&
+                            err.lineNumber === 1;
+        });
+
+        assert.throws(() => {
+          JSONZ.parse('[{_$_: "RegExp", _$_value: "foo"}]', {reviveTypedContainers: true});
+        },
+        err => {
+          return err instanceof SyntaxError &&
+                            /^JSON-Z: invalid regular expression/.test(err.message) &&
+                            err.lineNumber === 1;
+        });
       });
 
       it('throws on invalid new lines in strings', () => {

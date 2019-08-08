@@ -256,6 +256,14 @@ describe('JSONZ', () => {
         assert.strictEqual(JSONZ.stringify(new Date(Date.UTC(2019, 6, 28, 8, 49, 58, 202))),
           "_Date('2019-07-28T08:49:58.202Z')");
       });
+
+      it('stringifies regexes objects as extended types', () => {
+        assert.strictEqual(JSONZ.stringify(/\d+z/),
+          "_RegExp('/\\\\d+z/')");
+
+        assert.strictEqual(JSONZ.stringify(/\d+z/gi),
+          "_RegExp('/\\\\d+z/gi')");
+      });
     });
 
     describe('strings', () => {

@@ -62,7 +62,7 @@ The following features, which are not supported in standard JSON, have been adde
 - Numbers may be `BigInt` values by appending a lowercase `n` to the end of an integer value, e.g. `9_223_372_036_854_775_807n`.
 - When running a version of JavaScript that does not support native `BigInt` primitives, a third-party `BigInt`-like library can be used.
 - `BigInt` values can be in decimal, hexadecimal, octal, or binary form. Exponential notation can also be used (e.g. `4.2E12n`) so long as the value including its exponent specifies an integer value.
-- Numbers may be extended-precision decimal values by appending a lowercase `m`, e.g. `3.141592653589793238462643383279m`. (Using a third-party extended-precision library is necessary to take full advantage of this feature.)
+- Numbers may be extended-precision decimal values by appending a lowercase `m`, e.g. `3.141592653589793238462643383279m`. `NaN_m`, `Infinity_m`, and `-Infinity_m` can also be used. (Using a third-party extended-precision library is necessary to take full advantage of this feature.)
 
 ### Comments
 
@@ -92,7 +92,7 @@ The following features, which are not supported in standard JSON, have been adde
 
 In standard JSON, all values are either strings, numbers, booleans, or `null`s, or values are objects or arrays composed of the latter as well as other objects and arrays. JSON-Z optionally allows special handling for other data types, so that values such a `Date` or `Set` objects can be specifically represented as such, parsed and stringified distinctly without having to rely on reviver and replacer functions.
 
-- Built-in support for `Date`, `Map`, `Set`, and `Uint8Array` (using base64 representation). `Uint8ClampedArray` is also covered, treated as `Uint8Array`.
+- Built-in support for `Date`, `Map`, `Set`, `RegExp`, and `Uint8Array` (using base64 representation). `Uint8ClampedArray` is also covered, treated as `Uint8Array`.
 - There is also built-in support for `BigInt` and "Big Decimal" values as extended types, an alternative to using plain numbers with `n` or `m` suffixes.
 - User-defined extended type handlers, which can both add new data types, or override the handling of built-in extended data types.
 
@@ -292,7 +292,7 @@ Sets a function or class for handling extended-precision decimal floating point 
 
 #### Parameters
 
-- `bigDoubleClass`: A function or class responsible for handling big decimal values. `bigDoubleClass(valueAsString)`, e.g. `bigDoubleClass('14.7')`, either with or without a preceding `new`, must return a big decimal object that satisfies the test `bigDecimalValue instanceof bigDoubleClass`.
+- `bigDoubleClass`: A function or class responsible for handling big decimal values. `bigDoubleClass(valueAsString | NaN | Infinity | -Infinity)`, e.g. `bigDoubleClass('14.7')` or `bigDoubleClass(NaN)`, either with or without a preceding `new`, must return a big decimal object that satisfies the test `bigDecimalValue instanceof bigDoubleClass`.
 
 #### Sample usage
 
