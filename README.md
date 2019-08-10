@@ -1,18 +1,21 @@
 # JSON-Z – JSON for Everyone
 
-[![NPM Stats](https://nodei.co/npm/json-z.png)](https://npmjs.org/package/json-z/)
+[![NPM Stats](https://nodei.co/npm/json-z.svg)](https://npmjs.org/package/json-z/)
 
+[![npm](https://img.shields.io/npm/v/json-z.svg)](https://npmjs.org/package/json-z/)
 [![Build Status](https://travis-ci.com/kshetline/json-z.svg?branch=master)][Build Status]
 [![Coverage Status](https://coveralls.io/repos/github/kshetline/json-z/badge.svg?branch=master)](https://coveralls.io/github/kshetline/json-z?branch=master)
-[![npm](https://img.shields.io/npm/v/json-z.svg)](https://npmjs.org/package/json-z/)
 [![npm downloads](https://img.shields.io/npm/dm/json-z.svg)](https://npmjs.org/package/json-z/)
 [![npm bundle size](https://img.shields.io/bundlephobia/min/json-z.svg)](https://npmjs.org/package/json-z/)
+[![nggyu](https://json-z.org/nggyu.svg)](https://www.youtube.com/watch?v=dQw4w9WgXcQ)
 
 JSON-Z is a superset of [JSON] that aims to alleviate some of the limitations of JSON by expanding its syntax to include some productions from [ECMAScript 5.1], [ECMAScript 6.0], and later.
 
 The goal of JSON-Z is to increase flexibility of parsing while, by default, maintaining maximum compatibility with standard JSON for stringification. JSON-Z output, like JSON, is also valid JavaScript (with two *optional* exceptions).
 
 This JavaScript library is the official reference implementation for JSON-Z parsing and serialization libraries.
+
+<div style="font-weight: bold; text-align: center">See the interactive JSON-Z demo at <a href="https://json-z.org/">json-z.org</a>.</div>
 
 [Build Status]: https://travis-ci.org/kshetline/json-z
 
@@ -59,7 +62,7 @@ The following features, which are not supported in standard JSON, have been adde
 - Numbers may be [IEEE 754] positive infinity (`Infinity`), negative infinity (`-Infinity`), and `NaN`.
 - Numbers may begin with an explicit plus sign.
 - Negative zero (`-0`) is parsed and stringified as distinct from positive 0.
-- Numbers may be `BigInt` values by appending a lowercase `n` to the end of an integer value, e.g. `9_223_372_036_854_775_807n`.
+- Numbers may be `BigInt` values by appending a lowercase `n` to the end of an integer value, e.g. `-23888n`, or `9_223_372_036_854_775_807n`.
 - When running a version of JavaScript that does not support native `BigInt` primitives, a third-party `BigInt`-like library can be used.
 - `BigInt` values can be in decimal, hexadecimal, octal, or binary form. Exponential notation can also be used (e.g. `4.2E12n`) so long as the value including its exponent specifies an integer value.
 - Numbers may be extended-precision decimal values by appending a lowercase `m`, e.g. `3.141592653589793238462643383279m`. `NaN_m`, `Infinity_m`, and `-Infinity_m` can also be used. (Using a third-party extended-precision library is necessary to take full advantage of this feature.)
@@ -90,7 +93,7 @@ The following features, which are not supported in standard JSON, have been adde
 
 ### Extended types
 
-In standard JSON, all values are either strings, numbers, booleans, or `null`s, or values are objects or arrays composed of the latter as well as other objects and arrays. JSON-Z optionally allows special handling for other data types, so that values such a `Date` or `Set` objects can be specifically represented as such, parsed and stringified distinctly without having to rely on reviver and replacer functions.
+In standard JSON, all values are either strings, numbers, booleans, or `null`s, or values are objects or arrays composed of the latter as well as other objects and arrays. JSON-Z optionally allows special handling for other data types, so that values such `Date` or `Set` objects can be specifically represented as such, parsed and stringified distinctly without having to rely on reviver and replacer functions.
 
 - Built-in support for `Date`, `Map`, `Set`, `RegExp`, and `Uint8Array` (using base64 representation). `Uint8ClampedArray` is also covered, treated as `Uint8Array`.
 - There is also built-in support for `BigInt` and "Big Decimal" values as extended types, an alternative to using plain numbers with `n` or `m` suffixes.
@@ -156,7 +159,7 @@ import * as JSONZ from 'json-z';
 
 ### Browsers
 ```
-<script src="https://unpkg.com/TODO-update-link/dist/index.min.js"></script>
+<script src="https://unpkg.com/json-z/dist/index.min.js"></script>
 ```
 
 This will create a global `JSONZ` variable.
@@ -209,7 +212,7 @@ This works very much like [`JSON.stringify`](https://developer.mozilla.org/en-US
 
   When using the standard `JSON.stringify()`, a replacer function is called with two arguments: `key` and `value`. JSON-Z adds a third argument, `holder`. This value is already available to standard `function`s as `this`, but `this` won't be bound to `holder` when using an anonymous (arrow) function as a replacer, so the third argument (which can be ignored if not needed) provides alternative access to the `holder` value.
 - `space`: A string or number that is used to insert white space into the output JSON-Z string for readability purposes. If this is a number, it indicates the number of space characters to use as white space; this number is capped at 10. Values less than 1 indicate that no space should be used. If this is a string, the string (or the first 10 characters of the string, if it's longer than that) is used as white space. A single space adds white space without adding indentation. If this parameter is not provided (or is null), no white space is added. If indenting white space is used, trailing commas can optionally appear in objects and arrays.
-- `options`: An object with the following properties:
+- `options`: This can either be an `OptionSet` value (see [below](#jsonzsetoptionsoptionsadditionaloptions)), or an object with the following properties:
   - `extendedPrimitives`: If `true` (the default is `false`) this enables direct stringification of `Infinity`, `-Infinity`, and `NaN`. Otherwise these values become `null`.
   - `extendedTypes`: If `JSONZ.ExtendedTypeMode.AS_FUNCTIONS` or `JSONZ.ExtendedTypeMode.AS_OBJECTS` (the default is `JSONZ.ExtendedTypeMode.OFF`), this enables special representation of additional data types, such as `_Date("2019-07-28T08:49:58.202Z")`, which can be parsed directly as a JavaScript `Date` object, or `{"_$_": "Date", "_$_value": "2019-07-28T08:49:58.202Z"}`, which can be automatically rendered as a `Date` object by a built-in replacer.
   - `primitiveBigDecimal`: If `true` (the default is `false`) this enables direct stringification of big decimals using the '`m`' suffix. Otherwise big decimals are provided as quoted strings or extended types. _(Note: The '`m`' suffix can't be parsed as current valid JavaScript, but it is potentially a future valid standard notation.)_
@@ -313,7 +316,7 @@ Sets global options which will be used for all calls to `JSONZ.stringify()`. The
 
 #### Parameters
 
-- `options`: This can be an object just as described for [`JSONZ.stringify()`](#jsonzstringify), or it can be one of the following constants:
+- `options`: This can be an object just as described for [`JSONZ.stringify()`](#jsonzstringify), or it can be one of the following `OptionSet` constants:
   - `JSONZ.OptionSet.MAX_COMPATIBILITY`: These are the options which make the output of JSON-Z fully JSON-compliant.
   - `JSONZ.OptionSet.RELAXED`: These options produce output which is fully-valid (albeit cutting-edge) JavaScript, removing unnecessary quotes, favoring single quotes, permitting values like `undefined` and `NaN` and sparse arrays.
   - `JSONZ.OptionSet.THE_WORKS`: This set of options pulls out (nearly) all of the stops, creating output which generally will have to be parsed back using JSON-Z, including function-style extended types and big decimal numbers. `revealHiddenArrayProperties` remains false, however, and must be expressly activated.
@@ -375,6 +378,12 @@ This has the advantage of being valid standard JSON, and even without using JSON
 ### JSONZ.globalizeTypeHandlers([prefix])
 
 This function registers your type handlers (and the built-in type handlers) as global functions, which facilitates the process of handling JSON-Z output as JSON-P. The optional `prefix` argument (which needs to be either a single underscore (the default), or a valid JavaScript identifier that both begins and ends in an underscore) lets you control how these functions use the global namespace. If you change the default prefix, that same prefix needs to be used as an option by the call to `JSONZ.stringify()` which creates the output that you're consuming.
+
+  Any previously globalized type handlers are first removed.
+
+### JSONZ.removeGlobalizedTypeHandlers()
+
+This function removes all previously globalized type handlers.
 
 ### JSONZ.removeTypeHandler(typeName)
 

@@ -54,7 +54,7 @@ export function parse(text: string, reviver?: JsonZReviver, options?: JsonZParse
 
 export function stringify(value: any, replacer?: JsonZReplacer | JsonZAllowedKeys,
                           space?: string | number | String | Number): string;
-export function stringify(value: any, options?: JsonZOptions,
+export function stringify(value: any, options?: JsonZOptions | OptionSet,
                           space?: string | number | String | Number): string;
 
 export function setOptions(options: JsonZOptions | OptionSet, extraOptions?: JsonZOptions): void;
@@ -69,6 +69,7 @@ export function removeTypeHandler(typeName: string): void;
 export function resetStandardTypeHandlers(): void;
 export function restoreStandardTypeHandlers(): void;
 export function globalizeTypeHandlers(prefix?: string): void;
+export function removeGlobalizedTypeHandlers(): void;
 
 export const DELETE: Symbol;
 

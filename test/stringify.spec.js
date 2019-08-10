@@ -2,6 +2,7 @@
 const assert = require('assert');
 const JSONZ = require('../lib');
 const big = require('../lib/bignumber-util');
+const optionsMgr = require('../lib/options-manager');
 const bigInt = require('big-integer');
 const Decimal = require('decimal.js');
 
@@ -581,6 +582,13 @@ describe('JSONZ', () => {
 
       JSONZ.setOptions(JSONZ.OptionSet.THE_WORKS, {space: 1});
       assert.strictEqual(JSONZ.stringify({a: 1, b: NaN, c: bi, d: bd}), '{a: 1, b: NaN, c: 1n, d: 1m}');
+      assert.strictEqual(JSONZ.stringify({a: 1, b: NaN, c: bi, d: bd}, JSONZ.OptionSet.MAX_COMPATIBILITY),
+        '{"a":1,"b":null,"c":"1","d":"1"}');
+      JSONZ.setOptions(-1); // Invalid option
+      assert.strictEqual(JSONZ.stringify({a: 1, b: NaN, c: bi, d: bd}), '{a: 1, b: NaN, c: 1n, d: 1m}');
+
+      assert.ok(optionsMgr.getOptionSet(JSONZ.OptionSet.RELAXED));
+      assert.deepEqual(optionsMgr.getOptionSet(-1), {});
     });
   });
 
@@ -628,16 +636,18 @@ describe('JSONZ', () => {
     JSONZ.removeTypeHandler('notThere');
     assert.strictEqual(JSONZ.stringify(date), "'2019-07-28T08:49:58.202Z'");
     JSONZ.restoreStandardTypeHandlers();
-    assert.strictEqual(JSONZ.stringify([date, new Double(2)]), "[_Date('2019-07-28T08:49:58.202Z'),_double(2)]");
+    assert.strictEqual(JSONZ.stringify([date, new Double(2)]), `[_Date('${dateStr}'),_double(2)]`);
     JSONZ.resetStandardTypeHandlers();
     assert.strictEqual(JSONZ.stringify(new Date(NaN)), '_Date(NaN)');
-    assert.strictEqual(JSONZ.stringify([date, new Double(2)]), "[_Date('2019-07-28T08:49:58.202Z'),{value:4}]");
+    assert.strictEqual(JSONZ.stringify([date, new Double(2)]), `[_Date('${dateStr}'),{value:4}]`);
     assert.strictEqual(JSONZ.stringify(new Set([4, 5])), '_Set([4,5])');
     assert.strictEqual(JSONZ.stringify(new Map([['foo', 4], ['bar', 5]]), null, 1), "_Map([['foo', 4], ['bar', 5]])");
     assert.strictEqual(JSONZ.stringify(new Uint8Array([0, 1, 2, 253, 254, 255])), "_Uint8Array('AAEC/f7/')");
 
     assert.strictEqual(global._Date, undefined);
     JSONZ.globalizeTypeHandlers();
-    assert.strictEqual(global._Date('2019-07-28T08:49:58.202Z').getTime(), date.getTime());
+    assert.strictEqual(global._Date(dateStr).getTime(), date.getTime());
+    JSONZ.removeGlobalizedTypeHandlers();
+    assert.strictEqual(global._Date, undefined);
   });
 });

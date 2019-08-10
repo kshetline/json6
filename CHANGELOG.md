@@ -1,3 +1,8 @@
+### 3.2.0
+
+* `stringify()` will now accept an `OptionSet` value as well as explicit options.
+* Added the `removeGlobalizedTypeHandlers()` function.
+
 ### 3.1.0
 
 * Add built-in extended type handler for regular expressions.
