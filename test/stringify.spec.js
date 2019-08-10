@@ -588,7 +588,7 @@ describe('JSONZ', () => {
       assert.strictEqual(JSONZ.stringify({a: 1, b: NaN, c: bi, d: bd}), '{a: 1, b: NaN, c: 1n, d: 1m}');
 
       assert.ok(optionsMgr.getOptionSet(JSONZ.OptionSet.RELAXED));
-      assert.deepEqual(optionsMgr.getOptionSet(-1), {});
+      assert.deepStrictEqual(optionsMgr.getOptionSet(-1), {});
     });
   });
 
