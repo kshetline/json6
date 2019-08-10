@@ -1,3 +1,7 @@
+### 3.2.1
+
+* Minor documentation clean-up.
+
 ### 3.2.0
 
 * `stringify()` will now accept an `OptionSet` value as well as explicit options.

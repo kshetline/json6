@@ -15,7 +15,9 @@ The goal of JSON-Z is to increase flexibility of parsing while, by default, main
 
 This JavaScript library is the official reference implementation for JSON-Z parsing and serialization libraries.
 
-<div style="font-weight: bold; text-align: center">See the interactive JSON-Z demo at <a href="https://json-z.org/">json-z.org</a>.</div>
+<!-- Only the deprecated old "align" attribute will do the job for GitHub Markdown. -->
+<!--suppress HtmlDeprecatedAttribute -->
+<p align="center"><b>See the interactive JSON-Z demo at <a href="https://json-z.org/">json-z.org</a>.</b><br></p>
 
 [Build Status]: https://travis-ci.org/kshetline/json-z
 
@@ -212,7 +214,7 @@ This works very much like [`JSON.stringify`](https://developer.mozilla.org/en-US
 
   When using the standard `JSON.stringify()`, a replacer function is called with two arguments: `key` and `value`. JSON-Z adds a third argument, `holder`. This value is already available to standard `function`s as `this`, but `this` won't be bound to `holder` when using an anonymous (arrow) function as a replacer, so the third argument (which can be ignored if not needed) provides alternative access to the `holder` value.
 - `space`: A string or number that is used to insert white space into the output JSON-Z string for readability purposes. If this is a number, it indicates the number of space characters to use as white space; this number is capped at 10. Values less than 1 indicate that no space should be used. If this is a string, the string (or the first 10 characters of the string, if it's longer than that) is used as white space. A single space adds white space without adding indentation. If this parameter is not provided (or is null), no white space is added. If indenting white space is used, trailing commas can optionally appear in objects and arrays.
-- `options`: This can either be an `OptionSet` value (see [below](#jsonzsetoptionsoptionsadditionaloptions)), or an object with the following properties:
+- `options`: This can either be an `OptionSet` value (see [below](#jsonzsetoptionsoptions-additionaloptions)), or an object with the following properties:
   - `extendedPrimitives`: If `true` (the default is `false`) this enables direct stringification of `Infinity`, `-Infinity`, and `NaN`. Otherwise these values become `null`.
   - `extendedTypes`: If `JSONZ.ExtendedTypeMode.AS_FUNCTIONS` or `JSONZ.ExtendedTypeMode.AS_OBJECTS` (the default is `JSONZ.ExtendedTypeMode.OFF`), this enables special representation of additional data types, such as `_Date("2019-07-28T08:49:58.202Z")`, which can be parsed directly as a JavaScript `Date` object, or `{"_$_": "Date", "_$_value": "2019-07-28T08:49:58.202Z"}`, which can be automatically rendered as a `Date` object by a built-in replacer.
   - `primitiveBigDecimal`: If `true` (the default is `false`) this enables direct stringification of big decimals using the '`m`' suffix. Otherwise big decimals are provided as quoted strings or extended types. _(Note: The '`m`' suffix can't be parsed as current valid JavaScript, but it is potentially a future valid standard notation.)_
