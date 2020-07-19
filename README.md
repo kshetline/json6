@@ -19,7 +19,7 @@ This JavaScript library is the official reference implementation for JSON-Z pars
 <!--suppress HtmlDeprecatedAttribute -->
 <p align="center"><b>See the interactive JSON-Z demo at <a href="https://json-z.org/">json-z.org</a>.</b><br></p>
 
-[Build Status]: https://travis-ci.org/kshetline/json-z
+[Build Status]: https://travis-ci.com/kshetline/json-z
 
 [Coverage Status]: https://coveralls.io/github/kshetline/json-z
 
@@ -465,16 +465,17 @@ MIT. See [LICENSE.md](./LICENSE.md) for details.
 
 ## Credits
 
-[Assem Kishore](https://github.com/aseemk) founded this project as [JSON5](https://json5.org/).
+[Assem Kishore](https://github.com/aseemk) founded the [JSON5](https://json5.org/)
+project, upon which JSON-Z is based.
 
 [Michael Bolin](http://bolinfest.com/) independently arrived at and published
-some of these same ideas with awesome explanations and detail. Recommended
+some of the same ideas that went into JSON5, with awesome explanations and detail. Recommended
 reading: [Suggested Improvements to JSON](http://bolinfest.com/essays/json.html)
 
 [Douglas Crockford](http://www.crockford.com/) of course designed and built
-JSON, but his state machine diagrams on the [JSON website](http://json.org/), as
-cheesy as it may sound, gave us motivation and confidence that building a new
-parser to implement these ideas was within reach! The original
+JSON, but his state machine diagrams on the [JSON website](http://json.org/),
+gave the JSON5 team motivation and confidence that building
+a new parser to implement these ideas was within reach. The original
 implementation of JSON5 was also modeled directly off of Doug’s open-source
 [json_parse.js] parser. We’re grateful for that clean and well-documented
 code.
@@ -482,13 +483,14 @@ code.
 [json_parse.js]: https://github.com/douglascrockford/JSON-js/blob/master/json_parse.js
 
 [Max Nanasy](https://github.com/MaxNanasy) has been an early and prolific
-supporter, contributing multiple patches and ideas.
+supporter of JSON5, contributing multiple patches and ideas.
 
 [Andrew Eisenberg](https://github.com/aeisenberg) contributed the original
-`stringify` method.
+JSON5 `stringify` method.
 
-[Jordan Tucker](https://github.com/jordanbtucker) has aligned JSON5 more closely
-with ES5, wrote the official JSON5 specification, completely rewrote the
-codebase from the ground up, and is actively maintaining this project.
+[Jordan Tucker](https://github.com/jordanbtucker) aligned JSON5 more closely
+with ES5, wrote the official JSON5 specification, completely rewrote the JSON5
+codebase from the ground up, and is actively maintaining the JSON5 project.
 
-[Kerry Shetline](https://github.com/kshetline) branched off from the JSON5 project to create [JSON-Z](https://json-z.org/).
+[Kerry Shetline](https://github.com/kshetline) branched off from JSON5,
+at version 2.1.0 of that project, to create [JSON-Z](https://json-z.org/).
