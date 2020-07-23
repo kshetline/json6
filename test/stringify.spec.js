@@ -6,13 +6,17 @@ const optionsMgr = require('../lib/options-manager');
 const bigInt = require('big-integer');
 const Decimal = require('decimal.js');
 
+const FixedDecimal = Decimal.clone().set({ precision: 34, minE: -6143, maxE: 6144 })
+
 JSONZ.setBigInt(bigInt);
 JSONZ.setBigDecimal(Decimal);
+JSONZ.setFixedBigDecimal(FixedDecimal);
 JSONZ.setOptions({
   extendedPrimitives: true,
   extendedTypes: JSONZ.ExtendedTypeMode.AS_FUNCTIONS,
   primitiveBigDecimal: true,
   primitiveBigInt: true,
+  primitiveFixedBigDecimal: true,
   quote: JSONZ.Quote.PREFER_SINGLE,
   quoteAllKeys: false,
   sparseArrays: true,

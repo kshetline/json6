@@ -98,7 +98,7 @@ The following features, which are not supported in standard JSON, have been adde
 In standard JSON, all values are either strings, numbers, booleans, or `null`s, or values are objects or arrays composed of the latter as well as other objects and arrays. JSON-Z optionally allows special handling for other data types, so that values such `Date` or `Set` objects can be specifically represented as such, parsed and stringified distinctly without having to rely on reviver and replacer functions.
 
 - Built-in support for `Date`, `Map`, `Set`, `RegExp`, and `Uint8Array` (using base64 representation). `Uint8ClampedArray` is also covered, treated as `Uint8Array`.
-- There is also built-in support for `BigInt` and "Big Decimal" values as extended types, an alternative to using plain numbers with `n` or `m` suffixes.
+- There is also built-in support for `BigInt` and "Big Decimal" values as extended types, an alternative to using plain numbers with `n`, `m`, or `d` suffixes.
 - User-defined extended type handlers, which can both add new data types, or override the handling of built-in extended data types.
 
 [IdentifierName]: https://www.ecma-international.org/ecma-262/5.1/#sec-7.6

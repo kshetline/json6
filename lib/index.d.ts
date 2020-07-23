@@ -82,3 +82,5 @@ export function hasBigDecimal(): boolean;
 export function setBigInt(bigIntClass: any): void;
 
 export function setBigDecimal(bigDoubleClass: any): void;
+
+export function setFixedBigDecimal(fixedBigDoubleClass: any): void;
