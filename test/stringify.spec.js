@@ -6,7 +6,7 @@ const optionsMgr = require('../lib/options-manager');
 const bigInt = require('big-integer');
 const Decimal = require('decimal.js');
 
-const FixedDecimal = Decimal.clone().set({ precision: 34, minE: -6143, maxE: 6144 })
+const FixedDecimal = Decimal.clone().set({precision: 34, minE: -6143, maxE: 6144});
 
 JSONZ.setBigInt(bigInt);
 JSONZ.setBigDecimal(Decimal);
@@ -245,6 +245,13 @@ describe('JSONZ', () => {
             big.toBigDecimal('2.718281828459045'),
             {primitiveBigDecimal: false, extendedTypes: JSONZ.ExtendedTypeMode.AS_FUNCTIONS}),
           "_BigDecimal('2.718281828459045')");
+        });
+
+        it('stringifies fixed bigdecimal values as function values', () => {
+          assert.strictEqual(JSONZ.stringify(
+            big.toFixedBigDecimal('2.718281828459045'),
+            {primitiveFixedBigDecimal: false, extendedTypes: JSONZ.ExtendedTypeMode.AS_FUNCTIONS}),
+          "_FixedBigDecimal('2.718281828459045')");
         });
 
         it('stringifies bigdecimal values as type containers', () => {

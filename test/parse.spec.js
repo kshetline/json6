@@ -6,7 +6,7 @@ const util = require('../lib/util');
 const bigInt = require('big-integer');
 const Decimal = require('decimal.js');
 
-const FixedDecimal = Decimal.clone().set({ precision: 34, minE: -6143, maxE: 6144 })
+const FixedDecimal = Decimal.clone().set({precision: 34, minE: -6143, maxE: 6144});
 
 JSONZ.setBigInt(bigInt);
 JSONZ.setBigDecimal(Decimal);
@@ -366,7 +366,7 @@ t.test('parse(text)', t => {
 
       t.ok(
         equalBigNumber(fbdTestValue, parsedValue),
-        big.hasBigDecimal() ? 'parses decimal128' : 'parses best approximation of decimal128'
+        big.hasFixedBigDecimal() ? 'parses decimal128' : 'parses best approximation of decimal128'
       );
     }
 
@@ -380,6 +380,7 @@ t.test('parse(text)', t => {
 
     JSONZ.setFixedBigDecimal(null);
     t.ok(big.getFixedBigDecimalType() === 'numeric', 'can disable fixed big decimal support');
+    t.ok(typeof JSONZ.parse('4d') === 'number', 'can parse fixed big decimal as primitive number');
     JSONZ.setFixedBigDecimal(FixedDecimal);
 
     t.end();
@@ -447,6 +448,12 @@ t.test('parse(text)', t => {
       JSONZ.parse("_BigDecimal('3.14')").toString(),
       '3.14',
       'parses bigdecimal as extended type'
+    );
+
+    t.strictSame(
+      JSONZ.parse("_FixedBigDecimal('3.14')").toString(),
+      '3.14',
+      'parses fixed bigdecimal as extended type'
     );
 
     t.strictSame(
