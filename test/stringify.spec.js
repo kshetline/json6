@@ -5,8 +5,10 @@ const big = require('../lib/bignumber-util');
 const optionsMgr = require('../lib/options-manager');
 const bigInt = require('big-integer');
 const Decimal = require('decimal.js');
+const DecimalLight = require('decimal.js-light');
 
 const FixedDecimal = Decimal.clone().set({precision: 34, minE: -6143, maxE: 6144});
+const FixedDecimalAlt = DecimalLight.clone().set({precision: 34, minE: -6143, maxE: 6144});
 
 JSONZ.setBigInt(bigInt);
 JSONZ.setBigDecimal(Decimal);
@@ -661,4 +663,13 @@ describe('JSONZ', () => {
     JSONZ.removeGlobalizedTypeHandlers();
     assert.strictEqual(global._Date, undefined);
   });
+
+  if (big.hasBigDecimal() && big.hasFixedBigDecimal()) {
+    it('decimal from two different classes', () => {
+      JSONZ.setFixedBigDecimal(FixedDecimalAlt, 'fixed-decimal');
+      assert.strictEqual(JSONZ.stringify(Decimal('1.01')), '1.01m', 'parses decimal');
+      assert.strictEqual(JSONZ.stringify(FixedDecimalAlt('2.02')), '2.02d', 'parses fixed decimal');
+      JSONZ.setFixedBigDecimal(FixedDecimal);
+    });
+  }
 });

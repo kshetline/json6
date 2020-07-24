@@ -5,8 +5,10 @@ const big = require('../lib/bignumber-util');
 const util = require('../lib/util');
 const bigInt = require('big-integer');
 const Decimal = require('decimal.js');
+const DecimalLight = require('decimal.js-light');
 
 const FixedDecimal = Decimal.clone().set({precision: 34, minE: -6143, maxE: 6144});
+const FixedDecimalAlt = DecimalLight.clone().set({precision: 34, minE: -6143, maxE: 6144});
 
 JSONZ.setBigInt(bigInt);
 JSONZ.setBigDecimal(Decimal);
@@ -343,6 +345,7 @@ t.test('parse(text)', t => {
 
     JSONZ.setBigDecimal(null);
     t.ok(big.getBigDecimalType() === 'numeric', 'can disable big decimal support');
+    t.ok(typeof JSONZ.parse('4m') === 'number', 'can parse big decimal as primitive number');
     JSONZ.setBigDecimal(Decimal);
 
     t.end();
@@ -381,6 +384,17 @@ t.test('parse(text)', t => {
     JSONZ.setFixedBigDecimal(null);
     t.ok(big.getFixedBigDecimalType() === 'numeric', 'can disable fixed big decimal support');
     t.ok(typeof JSONZ.parse('4d') === 'number', 'can parse fixed big decimal as primitive number');
+    JSONZ.setFixedBigDecimal(FixedDecimal);
+
+    t.end();
+  });
+
+  t.test('decimal from two different classes', t => {
+    JSONZ.setFixedBigDecimal(FixedDecimalAlt);
+    t.ok(typeof JSONZ.parse('1.01m').toString(), '1.01', 'parses decimal');
+    t.ok(typeof JSONZ.parse('2.02d').toString(), '2.02', 'parses fixed decimal');
+    JSONZ.setFixedBigDecimal(null);
+    t.ok(typeof JSONZ.parse('3d').toString(), '3', 'parses fixed decimal as plain number');
     JSONZ.setFixedBigDecimal(FixedDecimal);
 
     t.end();
