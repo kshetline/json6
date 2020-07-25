@@ -149,6 +149,10 @@ tap.test('CLI', t => {
     });
 
     proc.stderr.on('end', () => {
+      if (error.includes('JSON-Z')) { // Strip away debug content, if any
+        error = (/(JSON-Z.*?\n)/.exec(error) || [])[1];
+      }
+
       assert.strictEqual(error, "JSON-Z: invalid character 'a' at 1:1\n");
     });
 

@@ -5,9 +5,14 @@ const big = require('../lib/bignumber-util');
 const util = require('../lib/util');
 const bigInt = require('big-integer');
 const Decimal = require('decimal.js');
+const DecimalLight = require('decimal.js-light');
+
+const FixedDecimal = Decimal.clone().set({precision: 34, minE: -6143, maxE: 6144});
+const FixedDecimalAlt = DecimalLight.clone().set({precision: 34, minE: -6143, maxE: 6144});
 
 JSONZ.setBigInt(bigInt);
 JSONZ.setBigDecimal(Decimal);
+JSONZ.setFixedBigDecimal(FixedDecimal);
 JSONZ.setParseOptions({
   reviveTypedContainers: true,
 });
@@ -340,7 +345,57 @@ t.test('parse(text)', t => {
 
     JSONZ.setBigDecimal(null);
     t.ok(big.getBigDecimalType() === 'numeric', 'can disable big decimal support');
+    t.ok(typeof JSONZ.parse('4m') === 'number', 'can parse big decimal as primitive number');
     JSONZ.setBigDecimal(Decimal);
+
+    t.end();
+  });
+
+  t.test('pseudo decimal128', t => {
+    const testValues = [
+      '3.1415926535_8979323846_2643383279_5028841971_6939937510',
+      '-3.14',
+      '314',
+      '-314',
+      '3.14E02',
+      '-3.14E02',
+      '66.',
+      '-66.',
+    ];
+
+    for (const testValue of testValues) {
+      const fbdTestValue = big.toFixedBigDecimal(testValue.replace(/_/g, ''));
+      const parsedValue = JSONZ.parse(testValue + 'd');
+
+      t.ok(
+        equalBigNumber(fbdTestValue, parsedValue),
+        big.hasFixedBigDecimal() ? 'parses decimal128' : 'parses best approximation of decimal128'
+      );
+    }
+
+    t.ok(equalBigNumber(JSONZ.parse('NaNd'), FixedDecimal(NaN)), 'parses NaNd');
+    t.ok(equalBigNumber(JSONZ.parse('NaN_d'), FixedDecimal(NaN)), 'parses NaN_d');
+    t.ok(equalBigNumber(JSONZ.parse('+NaN_d'), FixedDecimal(NaN)), 'parses +NaN_d');
+    t.ok(equalBigNumber(JSONZ.parse('Infinityd'), FixedDecimal(Infinity)), 'parses Infinityd');
+    t.ok(equalBigNumber(JSONZ.parse('Infinity_d'), FixedDecimal(Infinity)), 'parses Infinity_d');
+    t.ok(equalBigNumber(JSONZ.parse('-Infinityd'), FixedDecimal(-Infinity)), 'parses -Infinityd');
+    t.ok(equalBigNumber(JSONZ.parse('-Infinity_d'), FixedDecimal(-Infinity)), 'parses -Infinity_d');
+
+    JSONZ.setFixedBigDecimal(null);
+    t.ok(big.getFixedBigDecimalType() === 'numeric', 'can disable fixed big decimal support');
+    t.ok(typeof JSONZ.parse('4d') === 'number', 'can parse fixed big decimal as primitive number');
+    JSONZ.setFixedBigDecimal(FixedDecimal);
+
+    t.end();
+  });
+
+  t.test('decimal from two different classes', t => {
+    JSONZ.setFixedBigDecimal(FixedDecimalAlt);
+    t.ok(typeof JSONZ.parse('1.01m').toString(), '1.01', 'parses decimal');
+    t.ok(typeof JSONZ.parse('2.02d').toString(), '2.02', 'parses fixed decimal');
+    JSONZ.setFixedBigDecimal(null);
+    t.ok(typeof JSONZ.parse('3d').toString(), '3', 'parses fixed decimal as plain number');
+    JSONZ.setFixedBigDecimal(FixedDecimal);
 
     t.end();
   });
@@ -407,6 +462,12 @@ t.test('parse(text)', t => {
       JSONZ.parse("_BigDecimal('3.14')").toString(),
       '3.14',
       'parses bigdecimal as extended type'
+    );
+
+    t.strictSame(
+      JSONZ.parse("_FixedBigDecimal('3.14')").toString(),
+      '3.14',
+      'parses fixed bigdecimal as extended type'
     );
 
     t.strictSame(

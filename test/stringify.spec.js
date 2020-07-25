@@ -5,14 +5,20 @@ const big = require('../lib/bignumber-util');
 const optionsMgr = require('../lib/options-manager');
 const bigInt = require('big-integer');
 const Decimal = require('decimal.js');
+const DecimalLight = require('decimal.js-light');
+
+const FixedDecimal = Decimal.clone().set({precision: 34, minE: -6143, maxE: 6144});
+const FixedDecimalAlt = DecimalLight.clone().set({precision: 34, minE: -6143, maxE: 6144});
 
 JSONZ.setBigInt(bigInt);
 JSONZ.setBigDecimal(Decimal);
+JSONZ.setFixedBigDecimal(FixedDecimal);
 JSONZ.setOptions({
   extendedPrimitives: true,
   extendedTypes: JSONZ.ExtendedTypeMode.AS_FUNCTIONS,
   primitiveBigDecimal: true,
   primitiveBigInt: true,
+  primitiveFixedBigDecimal: true,
   quote: JSONZ.Quote.PREFER_SINGLE,
   quoteAllKeys: false,
   sparseArrays: true,
@@ -241,6 +247,13 @@ describe('JSONZ', () => {
             big.toBigDecimal('2.718281828459045'),
             {primitiveBigDecimal: false, extendedTypes: JSONZ.ExtendedTypeMode.AS_FUNCTIONS}),
           "_BigDecimal('2.718281828459045')");
+        });
+
+        it('stringifies fixed bigdecimal values as function values', () => {
+          assert.strictEqual(JSONZ.stringify(
+            big.toFixedBigDecimal('2.718281828459045'),
+            {primitiveFixedBigDecimal: false, extendedTypes: JSONZ.ExtendedTypeMode.AS_FUNCTIONS}),
+          "_FixedBigDecimal('2.718281828459045')");
         });
 
         it('stringifies bigdecimal values as type containers', () => {
@@ -650,4 +663,13 @@ describe('JSONZ', () => {
     JSONZ.removeGlobalizedTypeHandlers();
     assert.strictEqual(global._Date, undefined);
   });
+
+  if (big.hasBigDecimal() && big.hasFixedBigDecimal()) {
+    it('decimal from two different classes', () => {
+      JSONZ.setFixedBigDecimal(FixedDecimalAlt);
+      assert.strictEqual(JSONZ.stringify(Decimal('1.01')), '1.01m', 'parses decimal');
+      assert.strictEqual(JSONZ.stringify(FixedDecimalAlt('2.02')), '2.02d', 'parses fixed decimal');
+      JSONZ.setFixedBigDecimal(FixedDecimal);
+    });
+  }
 });
