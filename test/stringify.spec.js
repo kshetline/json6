@@ -666,7 +666,7 @@ describe('JSONZ', () => {
 
   if (big.hasBigDecimal() && big.hasFixedBigDecimal()) {
     it('decimal from two different classes', () => {
-      JSONZ.setFixedBigDecimal(FixedDecimalAlt, 'fixed-decimal');
+      JSONZ.setFixedBigDecimal(FixedDecimalAlt);
       assert.strictEqual(JSONZ.stringify(Decimal('1.01')), '1.01m', 'parses decimal');
       assert.strictEqual(JSONZ.stringify(FixedDecimalAlt('2.02')), '2.02d', 'parses fixed decimal');
       JSONZ.setFixedBigDecimal(FixedDecimal);
