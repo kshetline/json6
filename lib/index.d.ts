@@ -27,6 +27,7 @@ export interface JsonZOptions {
   extendedTypes?: ExtendedTypeMode,
   primitiveBigDecimal?: boolean;
   primitiveBigInt?: boolean;
+  primitiveFixedBigDecimal?: boolean;
   quote?: '"' | "'" | Quote;
   quoteAllKeys?: boolean;
   replacer?: JsonZReplacer | JsonZAllowedKeys;
