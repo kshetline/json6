@@ -1,6 +1,6 @@
 {
   "name": "json-z",
-  "version": "3.3.1",
+  "version": "3.3.2",
   "description": "JSON for everyone.",
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
